@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{40d934e0-4213-42b4-8688-0b622b10b3e4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Sources\Camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\glitter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sources\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\includes\glad\glad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Sources\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Sources\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\advancedLightingMapShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\advancedLightingMapShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingMapShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingMapShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingMultipleShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingMultipleShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\objectMappingShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\objectMappingShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\skyboxShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\skyboxShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BumpMappingShaderF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BumpMappingShaderV.vert">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
