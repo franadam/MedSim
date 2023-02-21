@@ -71,7 +71,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\..\vendors\includes\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\vendors\libs\2017\Release\lib;..\..\vendors\libs\2017\Debug\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\vendors\libs\Debug\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\..\src\Sources;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>..\..\vendors\includes\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\vendors\libs\Release\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\Sources;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -93,7 +98,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\vendors\libs\Debug\lib\assimp-vc140-mt.lib;..\..\vendors\libs\Debug\lib\glfw3.lib;..\..\vendors\libs\Debug\lib\IrrXML.lib;..\..\vendors\libs\Debug\lib\irrKlang\irrKlang.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletDynamics_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletSoftBody_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\vendors\libs\Debug\lib\assimp-vc143-mt.lib;..\..\vendors\libs\Debug\lib\glfw3.lib;..\..\vendors\libs\Debug\lib\IrrXML.lib;..\..\vendors\libs\Debug\lib\irrKlang\irrKlang.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletDynamics_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletSoftBody_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -122,22 +127,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\..\vendors\libs\Release\lib\assimp-vc140-mt.lib;..\..\vendors\libs\Release\lib\glfw3.lib;..\..\vendors\libs\Release\lib\IrrXML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\vendors\libs\Release\lib\assimp-vc143-mt.lib;..\..\vendors\libs\Release\lib\glfw3_mt.lib;..\..\vendors\libs\Release\lib\IrrXML.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Sources\Camera.hpp" />
-    <ClInclude Include="..\..\Sources\glitter.hpp" />
-    <ClInclude Include="..\..\Sources\Mesh.hpp" />
-    <ClInclude Include="..\..\Sources\Model.hpp" />
-    <ClInclude Include="..\..\Sources\Shader.hpp" />
-    <ClInclude Include="..\..\vendors\includes\glad\glad.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Sources\glad.c" />
-    <ClCompile Include="..\..\Sources\main.cpp" />
-    <ClCompile Include="..\..\Sources\Shader.cpp" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\advancedLightingMapShaderF.frag" />
     <None Include="Shaders\advancedLightingMapShaderV.vert" />
@@ -151,6 +143,19 @@
     <None Include="Shaders\objectMappingShaderV.vert" />
     <None Include="Shaders\skyboxShaderF.frag" />
     <None Include="Shaders\skyboxShaderV.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Sources\glad.c" />
+    <ClCompile Include="..\..\Sources\main.cpp" />
+    <ClCompile Include="..\..\Sources\Shader.cpp" />
+    <ClCompile Include="..\..\Sources\stb_image.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Sources\Camera.hpp" />
+    <ClInclude Include="..\..\Sources\glitter.hpp" />
+    <ClInclude Include="..\..\Sources\Mesh.hpp" />
+    <ClInclude Include="..\..\Sources\Model.hpp" />
+    <ClInclude Include="..\..\Sources\Shader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
