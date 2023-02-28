@@ -17,13 +17,13 @@ public:
 
 	// Constructor
 	Shader(const GLchar *vertexSource, const GLchar *fragmentSource, const GLchar *geometrySource = nullptr, const GLchar *tessCPath = nullptr, const GLchar *tessEPath = nullptr);
-
 	// Sets the current shader as active, do we need to return?
 	Shader& use();
 
 	// Not sure compile should be it's own step separate from constructor
 	void compile();
 
+	void setFloat(const std::string &name, GLfloat value);
 	void setFloat(const GLchar *name, GLfloat value);
 	void setInteger(const GLchar *name, GLint value);
 
@@ -32,6 +32,8 @@ public:
 
 	void setVector3f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z);
 	void setVector3f(const GLchar *name, const glm::vec3 &value);
+	void setVector3f(const std::string &name, GLfloat x, GLfloat y, GLfloat z);
+	void setVector3f(const  std::string &name, const glm::vec3 &value);
 
 	void setVector4f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 	void setVector4f(const GLchar *name, const glm::vec4 &value);
