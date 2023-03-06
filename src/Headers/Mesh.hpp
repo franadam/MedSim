@@ -15,31 +15,15 @@
 
 // Assimp Includes
 #include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 // Local Headers
 #include "Shader.hpp"
+#include "Geometry.hpp"
 
 
 #endif 
-struct Vertex {
-    glm::vec3 Position; // Position
-    glm::vec3 Normal; // Normal
-    glm::vec2 TexCoords; // TexCoords	
-	glm::vec3 Tangent; // tangent 	
-	glm::vec3 Bitangent; // bitangent 
-};
-
-struct Texture {
-    GLuint id;
-    std::string type;
-    aiString path;
-};
-
-struct Face {
-	glm::vec3 p1; 
-	glm::vec3 p2; 
-	glm::vec3 p3; 
-};
 
 class Mesh {
 public:
@@ -47,14 +31,18 @@ public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
 	std::vector<Texture> textures;
-	std::vector<Face> faces;
+    std::vector<Face> faces;
+    aiAABB m_aabb;
+     
 
     /*  Functions  */
     // Constructor
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, aiAABB aabb);
+    Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
 
     // Render the mesh
 	void Draw(Shader shader);
+    bool isIntersectAABB(const Ray& ray);
 
 	GLuint getVAO();
 

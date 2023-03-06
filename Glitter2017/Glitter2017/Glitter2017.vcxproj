@@ -150,7 +150,6 @@
     <ClInclude Include="..\..\src\Headers\Gui.hpp" />
     <ClInclude Include="..\..\src\Headers\Mesh.hpp" />
     <ClInclude Include="..\..\src\Headers\Model.hpp" />
-    <ClInclude Include="..\..\src\Headers\Mouse.hpp" />
     <ClInclude Include="..\..\src\Headers\MousePicker.hpp" />
     <ClInclude Include="..\..\src\Headers\Shader.hpp" />
     <ClInclude Include="..\..\src\Headers\Simulation.hpp" />
@@ -162,7 +161,6 @@
     <ClCompile Include="..\..\src\Sources\main_simulation.cpp" />
     <ClCompile Include="..\..\src\Sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\Sources\Model.cpp" />
-    <ClCompile Include="..\..\src\Sources\Mouse.cpp" />
     <ClCompile Include="..\..\src\Sources\MousePicker.cpp" />
     <ClCompile Include="..\..\src\Sources\Shader.cpp" />
     <ClCompile Include="..\..\src\Sources\Simulation.cpp" />

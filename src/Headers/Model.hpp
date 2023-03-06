@@ -21,6 +21,7 @@
 #include <thread>
 #include <future>
 #include <mutex>
+//#include <uuid>
 
 
 // GL Includes
@@ -52,6 +53,7 @@ private:
 	std::vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 	int mNumMeshes;
 	int mNumFaces;
+	//uuid  m_id;
 
 	/*  Functions   */
 	// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -60,6 +62,7 @@ private:
 	// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+
 
 	// Checks all material textures of a given type and loads the textures if they're not loaded yet.
 	// The required info is returned as a Texture struct.
@@ -77,6 +80,8 @@ public:
 
 	int getNumMeshes();
 	int getNumFaces();
+
+	bool computeIntersectAABB(const Ray& ray);
 
 	static std::pair<const aiScene*, std::string> loadAIScene(const GLchar* path);
 	static std::future<std::pair<const aiScene*, std::string>> preload(const GLchar* path);

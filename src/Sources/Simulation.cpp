@@ -3,17 +3,17 @@
 void Simulation::initMatrices(Camera camera) {
 	std::cout << "initMatrices" << "\n";
 
-	this->camera = camera;
-	this->ViewMatrix = camera.GetViewMatrix();
-	this->ProjectionMatrix = glm::perspective(camera.Zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
+	m_camera = camera;
+	m_ViewMatrix = camera.GetViewMatrix();
+	m_ProjectionMatrix = glm::perspective(camera.Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
 }
 
 void Simulation::initShaders() {
 	std::cout << "initShaders" << "\n";
 
-	//this->shaders["skyboxShader"] = new Shader("Shaders/skyboxShaderV.vert", "Shaders/skyboxShaderF.frag");
-	this->shaders["lightingShader"] = new Shader("Shaders/advancedLightingMapShaderV.vert", "Shaders/advancedLightingMapShaderF.frag");
-	//this->shaders["bumpShader"] = new Shader("Shaders/objectMappingShaderV.vert", "Shaders/objectMappingShaderF.frag");
+	//shaders["skyboxShader"] = new Shader("Shaders/skyboxShaderV.vert", "Shaders/skyboxShaderF.frag");
+	m_shaders["lightingShader"] = new Shader("Shaders/advancedLightingMapShaderV.vert", "Shaders/advancedLightingMapShaderF.frag");
+	//shaders["bumpShader"] = new Shader("Shaders/objectMappingShaderV.vert", "Shaders/objectMappingShaderF.frag");
 }
 
 void Simulation::initModels() {
@@ -23,66 +23,66 @@ void Simulation::initModels() {
 	/// la structure de ce code n'est clairement pas terrible...
 	//auto futRoom = Model::preload("Models/Room/Surgical_Room_Copie.dae");
 	auto futBones = Model::preload("Models/Body/Adam_Bones.dae");
-	auto futKidney = Model::preload("Models/Body/Adam_Urimary_System.dae");
-	auto futLung = Model::preload("Models/Body/Adam_Lungs.dae");
-	auto futLiver = Model::preload("Models/Body/Adam_Liver.dae");
-	auto futHeart = Model::preload("Models/Body/Adam_Heart.dae");
-	
+	//auto futKidney = Model::preload("Models/Body/Adam_Urimary_System.dae");
+	//auto futLung = Model::preload("Models/Body/Adam_Lungs.dae");
+	//auto futLiver = Model::preload("Models/Body/Adam_Liver.dae");
+	//auto futHeart = Model::preload("Models/Body/Adam_Heart.dae");
+
 	/// Make the app reactive while loading the models
 	std::set<std::string> loaded;
-	while (loaded.size() < 5) {
-		if (is_ready(futKidney)) loaded.insert("Kidney");
-		if (is_ready(futLung)) loaded.insert("Lung");
-		if (is_ready(futLiver)) loaded.insert("Liver");
-		if (is_ready(futHeart)) loaded.insert("Heart");
+	while (loaded.size() < 1) {
+		//if (is_ready(futKidney)) loaded.insert("Kidney");
+		//if (is_ready(futLung)) loaded.insert("Lung");
+		//if (is_ready(futLiver)) loaded.insert("Liver");
+		//if (is_ready(futHeart)) loaded.insert("Heart");
 		if (is_ready(futBones)) loaded.insert("Bones");
 		//if (is_ready(futRoom)) loaded.insert("Room");
 	}
-	
-	Model Kidney(futKidney.get());
-	Model Lung(futLung.get());
-	Model Liver(futLiver.get());
-	Model Heart(futHeart.get());
+
+	//Model Kidney(futKidney.get());
+	//Model Lung(futLung.get());
+	//Model Liver(futLiver.get());
+	//Model Heart(futHeart.get());
 	Model Bones(futBones.get());
 	//Model Room(futRoom.get());
-	
+
 	std::cout << "\ndone importing all models\n\n";
-	
-	this->models.push_back(Kidney);
-	this->models.push_back(Lung);
-	this->models.push_back(Liver);
-	this->models.push_back(Heart);
-	this->models.push_back(Bones);
+
+	//this->m_models.push_back(Kidney);
+	//this->m_models.push_back(Lung);
+	//this->m_models.push_back(Liver);
+	//this->m_models.push_back(Heart);
+	this->m_models.push_back(Bones);
 	//this->models.push_back(Room);
 }
 
 void Simulation::initUniforms(const GLchar* shaderName, glm::mat4 modelMatrix) {
 	//std::cout << "initUniforms" << "\n";
-	//this->setMVPmatrix(*this->shaders[shaderName], modelMatrix, this->ProjectionMatrix, this->ViewMatrix);
-	this->shaders[shaderName]->use();
+	//setMVPmatrix(*shaders[shaderName], modelMatrix, ProjectionMatrix, ViewMatrix);
+	m_shaders[shaderName]->use();
 
-	this->shaders[shaderName]->setMatrix4("Model", modelMatrix);
-	this->shaders[shaderName]->setMatrix4("Projection", this->ProjectionMatrix);
-	this->shaders[shaderName]->setMatrix4("View", this->ViewMatrix);
+	m_shaders[shaderName]->setMatrix4("Model", modelMatrix);
+	m_shaders[shaderName]->setMatrix4("Projection", m_ProjectionMatrix);
+	m_shaders[shaderName]->setMatrix4("View", m_ViewMatrix);
 
-	this->shaders[shaderName]->setVector3f("lightPos", this->lightPosition);
-	this->shaders[shaderName]->setVector3f("lightColor", this->lightColor);
-	this->shaders[shaderName]->setVector3f("viewPos", this->camera.Position);
+	m_shaders[shaderName]->setVector3f("lightPos", m_lightPosition);
+	m_shaders[shaderName]->setVector3f("lightColor", m_lightColor);
+	m_shaders[shaderName]->setVector3f("viewPos", m_camera.Position);
 }
 
 void Simulation::drawModels(const GLchar* shaderName, glm::mat4 modelMatrix) {
 	//std::cout << "drawModel" << "\n";
-	this->initUniforms(shaderName, modelMatrix);
+	initUniforms(shaderName, modelMatrix);
 
-	for (int m = 0; m < this->models.size(); m++)
-		this->models[m].Draw(*this->shaders[shaderName]);
+	for (int m = 0; m < m_models.size(); m++)
+		m_models[m].Draw(*m_shaders[shaderName]);
 }
 
 void Simulation::drawModel(const size_t pos, const GLchar* shaderName, glm::mat4 modelMatrix) {
 	//std::cout << "drawModel" << "\n";
-	this->initUniforms(shaderName, modelMatrix);
+	initUniforms(shaderName, modelMatrix);
 
-	this->models.at(pos).Draw(*this->shaders[shaderName]);
+	m_models.at(pos).Draw(*m_shaders[shaderName]);
 }
 
 void Simulation::initPointLights() {
@@ -107,28 +107,27 @@ void Simulation::initPointLights() {
 	glm::vec3 dirLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
 	glm::vec3 dirLightColor = whiteLight;
 
-	this->lightPosition = lightPosition;
-	this->lightColor = whiteLight;
+	m_lightPosition = lightPosition;
+	m_lightColor = whiteLight;
 }
 
 void Simulation::initLights() {
-	this->initPointLights();
+	initPointLights();
 };
 
 void Simulation::initPicker()
 {
 	std::cout << "initPicker" << "\n";
-	MousePicker picker = MousePicker(this->camera, this->ProjectionMatrix);
-	this->picker = picker;
+	MousePicker picker = MousePicker(m_camera, m_ProjectionMatrix);
+	m_picker = picker;
 }
 
 void Simulation::updatePicker(glm::mat4 viewMat, glm::mat4 projectionMat)
 {
 	std::cout << "initMatrices" << "\n";
 
-	this->camera = camera;
-	this->ViewMatrix = camera.GetViewMatrix();
-	this->ProjectionMatrix = glm::perspective(camera.Zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
+	m_ViewMatrix = m_camera.GetViewMatrix();
+	m_ProjectionMatrix = glm::perspective(m_camera.Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
 }
 
 //Constructors 
@@ -149,13 +148,13 @@ Simulation::Simulation(
 	gui::initFramebuffer();
 	gui::setCallbacks();
 	gui::initOpenGLOptions();
-	std::cout << gui::mWindow << "\n";
+	std::cout << gui::m_window << "\n";
 
-	this->initMatrices(camera);
-	this->initLights();
-	this->initShaders();
-	this->initModels();
-	this->initPicker();
+	initMatrices(camera);
+	initLights();
+	initShaders();
+	initModels();
+	initPicker();
 
 	std::cout << "glGetString(GL_VERSION) : " << glGetString(GL_VERSION) << "\n";
 
@@ -164,17 +163,17 @@ Simulation::Simulation(
 // Destructors
 Simulation::~Simulation() {
 
-	glfwDestroyWindow(gui::mWindow);
+	glfwDestroyWindow(gui::m_window);
 	glfwTerminate();
 
-	//for (size_t i = 0; i < this->shaders.size(); i++)
-		//delete this->shaders[i];
+	//for (size_t i = 0; i < shaders.size(); i++)
+		//delete shaders[i];
 
-	//for (auto i = 0; i < this->models.size(); i++)
-		//delete this->models[i] ;
+	//for (auto i = 0; i < models.size(); i++)
+		//delete models[i] ;
 
-	//for (size_t i = 0; i < this->pointLights.size(); i++)
-		//delete this->pointLights[i];
+	//for (size_t i = 0; i < pointLights.size(); i++)
+		//delete pointLights[i];
 }
 
 void Simulation::update() {
@@ -187,11 +186,29 @@ void Simulation::update() {
 
 	/// interactions !
 	gui::updateMouseDisplacements();
-	gui::cameraControl(this->camera);
-	//this->picker.update();
-	
+	gui::cameraControl(m_camera);
+
+	if (gui::m_keys[GLFW_MOUSE_BUTTON_LEFT] == true && m_id_model == -1) {
+		std::cout << "update : GLFW_MOUSE_BUTTON_LEFT" << "\n";
+
+		Ray ray = m_picker.getCurrentRay();
+
+		//selection model
+		for (int m = 0; m < m_models.size(); m++) {
+			if (m_models[m].computeIntersectAABB(ray)) {
+				m_id_model = m;
+
+			}
+		}
+
+	//m_picker.update();
+		std::cout << "update : m_id_model" << m_id_model << "\n";
+	}
+
+		
+
 	//Update the uniforms
-	//this->updateUniforms();
+	//updateUniforms();
 
 
 }
@@ -204,8 +221,8 @@ void Simulation::render() {
 	glClearColor(0.0f, 0.3f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	this->ViewMatrix = camera.GetViewMatrix();
-	this->ProjectionMatrix = glm::perspective(camera.Zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
+	m_ViewMatrix = m_camera.GetViewMatrix();
+	m_ProjectionMatrix = glm::perspective(m_camera.Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
 
 	//Render models
 	glm::mat4 UnitMat = glm::mat4(1);
@@ -213,10 +230,10 @@ void Simulation::render() {
 
 	RoomModel = glm::rotate(UnitMat, glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
 	RoomModel = glm::translate(RoomModel, glm::vec3(10.0f, -10.0f, -10.0f));
-	this->drawModels("lightingShader", RoomModel);
+	drawModels("lightingShader", RoomModel);
 
 	//End Draw
-	glfwSwapBuffers(gui::mWindow);
+	glfwSwapBuffers(gui::m_window);
 	// Flip Buffers and Draw
 	glfwPollEvents();
 }

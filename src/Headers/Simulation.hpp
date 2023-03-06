@@ -36,23 +36,26 @@ private:
 	///Variables
 
 	//Camera
-	Camera camera;
+	Camera m_camera;
+
+	//Model
+	int m_id_model = -1;
 
 	//Matrices
-	glm::mat4 ViewMatrix;
-	glm::mat4 ProjectionMatrix;
-
-	glm::vec3 lightPosition;
-	glm::vec3 lightColor;
+	glm::mat4 m_ViewMatrix;
+	glm::mat4 m_ProjectionMatrix;
+			  
+	glm::vec3 m_lightPosition;
+	glm::vec3 m_lightColor;
 
 	//Shaders
-	std::map<std::string, Shader *> shaders;
+	std::map<std::string, Shader *> m_shaders;
 	
 	//Models
-	std::vector<Model> models;
+	std::vector<Model> m_models;
 
 	//Mouse picker
-	MousePicker picker;
+	MousePicker m_picker;
 
 	//Private functions
 	void initMatrices(Camera camera);

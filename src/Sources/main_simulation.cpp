@@ -23,7 +23,7 @@
 
 int main()
 {
-	Simulation simulation("Medical Training", gui::WINDOW_WIDTH, gui::WINDOW_HEIGHT, gui::GL_VERSION_MAJOR, gui::GL_VERSION_MINOR, false);
+	Simulation simulation("Medical Training", gui::m_WINDOW_WIDTH, gui::m_WINDOW_HEIGHT, gui::m_GL_VERSION_MAJOR, gui::m_GL_VERSION_MINOR, false);
 
 	//MAIN LOOP
 	while (!gui::getWindowShouldClose())

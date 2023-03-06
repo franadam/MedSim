@@ -4,11 +4,12 @@
 
     /*  Functions  */
     // Constructor
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, aiAABB aabb)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->m_aabb = aabb;
 
         // Now that we have all the required data, set the vertex buffers and its attribute pointers.
         this->setupMesh();
@@ -109,4 +110,52 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 		
 		glBindVertexArray(0);
+    }
+
+
+    bool Mesh::isIntersectAABB(const Ray& ray)
+    {
+        double t;
+
+        // unitDir is unit direction vector of ray
+        glm::vec3 unitDir = glm::vec3(1.0);
+        unitDir.x = unitDir.x / ray.direction.x;
+        unitDir.y = unitDir.y / ray.direction.y;
+        unitDir.z = unitDir.z / ray.direction.z;
+
+        double tx1 = (this->m_aabb.mMin.x - ray.origine.x) * (unitDir.x);
+        double tx2 = (this->m_aabb.mMax.x - ray.origine.x) * (unitDir.x);
+
+        double tmin = glm::min(tx1, tx2);
+        double tmax = glm::max(tx1, tx2);
+
+        double ty1 = (this->m_aabb.mMin.y - ray.origine.y) * (unitDir.y);
+        double ty2 = (this->m_aabb.mMax.y - ray.origine.y) * (unitDir.y);
+
+        tmin = glm::max(tmin, glm::min(ty1, ty2));
+        tmax = glm::min(tmax, glm::max(ty1, ty2));
+
+        double tz1 = (this->m_aabb.mMin.z - ray.origine.z) * (unitDir.z);
+        double tz2 = (this->m_aabb.mMax.z - ray.origine.z) * (unitDir.z);
+
+        tmin = glm::max(tmin, glm::min(tz1, tz2));
+        tmax = glm::min(tmax, glm::max(tz1, tz2));
+
+        // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+        if (tmax < 0)
+        {
+            t = tmax;
+            return false;
+        }
+
+        // if tmin > tmax, ray doesn't intersect AABB
+        if (tmin > tmax)
+        {
+            t = tmax;
+            return false;
+        }
+
+        t = tmin;
+        return true;
+
     }

@@ -21,14 +21,16 @@
 #include <glm/gtc/matrix_inverse.hpp>
 
 /// Local Headers
-//#include "glitter.hpp"
-#include "Camera.hpp"
+#include "Geometry.hpp"
 #include "Gui.hpp"
+#include "Camera.hpp"
+
+
 
 class MousePicker
 {
 private:
-	glm::vec3 m_currentRay;
+	Ray m_currentRay;
 	glm::mat4 m_projectionMatrix;
 	glm::mat4 m_viewMatrix;
 	Camera m_camera;
@@ -39,7 +41,7 @@ public:
 	MousePicker(Camera cam, glm::mat4 projection);
 	MousePicker() = default;
 
-	glm::vec3 getCurrentRay();
+	Ray getCurrentRay();
 
 	void update();
 
@@ -47,10 +49,7 @@ public:
 	glm::vec3 normalisedCoordinates(double xpos, double ypos);
 	glm::vec4 eyeCoordinates(glm::vec4  homogeneousClip);
 	glm::vec3 worldCoordinates(glm::vec4  ray_eye);
-	glm::vec3 computeCurrentRay();
-	glm::vec3 getPointOnRay(glm::vec3 ray, float distance);
-	glm::vec3 binarySearch(int count, float start, float finish, glm::vec3 ray);
-	bool intersectionInRange(float start, float finish, glm::vec3 ray);
+	Ray computeCurrentRay();
 };
 
 #endif 
