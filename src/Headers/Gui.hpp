@@ -66,7 +66,10 @@ namespace gui {
 	void showFPS();
 
 	/// Camera management
-	void cameraControl(Camera& camera);
+	void cameraControl(Camera * camera);
+
+	void setMouseUserCallback(void (*cb)(void));
+	extern void (*mouseUserCallback)(void);
 
 }
 #endif

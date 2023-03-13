@@ -19,6 +19,7 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
+#include <glm/ext/matrix_projection.hpp>
 
 /// Local Headers
 #include "Geometry.hpp"
@@ -33,23 +34,24 @@ private:
 	Ray m_currentRay;
 	glm::mat4 m_projectionMatrix;
 	glm::mat4 m_viewMatrix;
-	Camera m_camera;
+	Camera * m_camera;
 	double m_mouseX;
 	double m_mouseY;
 
 public:
-	MousePicker(Camera cam, glm::mat4 projection);
+	MousePicker(Camera * cam, glm::mat4 projection);
 	MousePicker() = default;
 
 	Ray getCurrentRay();
 
 	void update();
 
-	glm::vec2 getScreenCoordinate();
+	glm::vec2 getScreenCoordinates();
 	glm::vec3 normalisedCoordinates(double xpos, double ypos);
 	glm::vec4 eyeCoordinates(glm::vec4  homogeneousClip);
 	glm::vec3 worldCoordinates(glm::vec4  ray_eye);
 	Ray computeCurrentRay();
+	Ray computeCurrentRay2();
 };
 
 #endif 

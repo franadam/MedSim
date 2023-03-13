@@ -1,19 +1,90 @@
 #pragma once
 
 #include "../Headers/Mesh.hpp"
+#include "../Headers/util.hpp"
 
     /*  Functions  */
     // Constructor
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, aiAABB aabb)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, aiAABB aabb, glm::mat4 PVM)
     {
+
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
         this->m_aabb = aabb;
+        //computeAABB(PVM);
+        boundingBoxVAO = createBoundingBoxVAO(m_aabb.mMin, m_aabb.mMax);
 
         // Now that we have all the required data, set the vertex buffers and its attribute pointers.
         this->setupMesh();
     }
+
+void Mesh::transformAABB(glm::mat4 PVM) {
+
+    glm::vec4 mMinw = PVM * glm::vec4(m_aabb.mMin.x, m_aabb.mMin.y, m_aabb.mMin.z, 1);
+    glm::vec4 mMaxw = PVM * glm::vec4(m_aabb.mMax.x, m_aabb.mMax.y, m_aabb.mMax.z, 1);
+
+    m_aabb.mMin = aiVector3D(mMinw.x, mMinw.y, mMinw.z);
+    m_aabb.mMin = aiVector3D(mMaxw.x, mMaxw.y, mMaxw.z);
+}
+
+void Mesh::computeAABB(glm::mat4 PVM) {
+
+    this->m_aabb.mMin.x = +INFINITY;
+    this->m_aabb.mMin.y = +INFINITY;
+    this->m_aabb.mMin.z = +INFINITY;
+
+    this->m_aabb.mMax.x = -INFINITY;
+    this->m_aabb.mMax.y = -INFINITY;
+    this->m_aabb.mMax.z = -INFINITY;
+    //gl_Position = Projection * View *Model* vec4(vs_out.FragPos, 1.0);
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        if (vertices[i].Position.x < this->m_aabb.mMin.x)
+        {
+            this->m_aabb.mMin.x = vertices[i].Position.x;
+        }
+        if (vertices[i].Position.y < this->m_aabb.mMin.y)
+        {
+            this->m_aabb.mMin.y = vertices[i].Position.y;
+        }
+        if (vertices[i].Position.z < this->m_aabb.mMin.z)
+        {
+            this->m_aabb.mMin.z = vertices[i].Position.z;
+        }
+
+        if (vertices[i].Position.x > this->m_aabb.mMax.x)
+        {
+            this->m_aabb.mMax.x = vertices[i].Position.x;
+        }
+        if (vertices[i].Position.y > this->m_aabb.mMax.y)
+        {
+            this->m_aabb.mMax.y = vertices[i].Position.y;
+        }
+        if (vertices[i].Position.z > this->m_aabb.mMax.z)
+        {
+            this->m_aabb.mMax.z = vertices[i].Position.z;
+        }
+    }
+
+    glm::vec4 mMinw = PVM * glm::vec4(m_aabb.mMin.x, m_aabb.mMin.y, m_aabb.mMin.z, 1);
+    glm::vec4 mMaxw = PVM * glm::vec4(m_aabb.mMax.x, m_aabb.mMax.y, m_aabb.mMax.z, 1);
+
+    m_aabb.mMin = aiVector3D(mMinw.x, mMinw.y, mMinw.z);
+    m_aabb.mMin = aiVector3D(mMaxw.x, mMaxw.y, mMaxw.z);
+
+    glm::vec3 size = glm::vec3(m_aabb.mMax.x - m_aabb.mMin.x, m_aabb.mMax.y - m_aabb.mMin.y, m_aabb.mMax.z - m_aabb.mMin.z);
+    glm::vec3 center = glm::vec3((m_aabb.mMin.x + m_aabb.mMax.x) / 2, (m_aabb.mMin.y + m_aabb.mMax.y) / 2, (m_aabb.mMin.z + m_aabb.mMax.z) / 2);
+    glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
+}
+
+void Mesh::DrawBoundingBox(Shader& shader, glm::mat4 placement)
+{
+    shader.setMatrix4("Model", placement);
+    glBindVertexArray(boundingBoxVAO);
+    glDrawArrays(GL_LINES, 0, 24);
+    glBindVertexArray(0);
+}
 
     // Render the mesh
     void Mesh::Draw(Shader shader) 
@@ -113,49 +184,37 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
     }
 
 
+    glm::vec3 Mesh::n_inv(glm::vec3 vector) {
+        glm::vec3 inv = glm::vec3(1.0 / vector.x, 1.0 / vector.y, 1.0 / vector.z);
+        return inv;
+    }
+
     bool Mesh::isIntersectAABB(const Ray& ray)
     {
-        double t;
-
-        // unitDir is unit direction vector of ray
-        glm::vec3 unitDir = glm::vec3(1.0);
-        unitDir.x = unitDir.x / ray.direction.x;
-        unitDir.y = unitDir.y / ray.direction.y;
-        unitDir.z = unitDir.z / ray.direction.z;
-
-        double tx1 = (this->m_aabb.mMin.x - ray.origine.x) * (unitDir.x);
-        double tx2 = (this->m_aabb.mMax.x - ray.origine.x) * (unitDir.x);
+        double tx1 = (m_aabb.mMin.x - ray.origin.x) / ray.direction.x;
+        double tx2 = (m_aabb.mMax.x - ray.origin.x) / ray.direction.x;
 
         double tmin = glm::min(tx1, tx2);
         double tmax = glm::max(tx1, tx2);
 
-        double ty1 = (this->m_aabb.mMin.y - ray.origine.y) * (unitDir.y);
-        double ty2 = (this->m_aabb.mMax.y - ray.origine.y) * (unitDir.y);
+        double ty1 = (m_aabb.mMin.y - ray.origin.y) / ray.direction.y;
+        double ty2 = (m_aabb.mMax.y - ray.origin.y) / ray.direction.y;
 
         tmin = glm::max(tmin, glm::min(ty1, ty2));
         tmax = glm::min(tmax, glm::max(ty1, ty2));
 
-        double tz1 = (this->m_aabb.mMin.z - ray.origine.z) * (unitDir.z);
-        double tz2 = (this->m_aabb.mMax.z - ray.origine.z) * (unitDir.z);
+        double tz1 = (m_aabb.mMin.z - ray.origin.z) / ray.direction.z;
+        double tz2 = (m_aabb.mMax.z - ray.origin.z) / ray.direction.z;
 
         tmin = glm::max(tmin, glm::min(tz1, tz2));
         tmax = glm::min(tmax, glm::max(tz1, tz2));
 
-        // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
-        if (tmax < 0)
-        {
-            t = tmax;
-            return false;
-        }
+        std::cout << "tmin : " << tmin << std::endl;
+        std::cout << "tmax : " << tmax << std::endl;
+        std::cout << "max : " << glm::max(0.0, tmin) << std::endl;
 
-        // if tmin > tmax, ray doesn't intersect AABB
-        if (tmin > tmax)
-        {
-            t = tmax;
-            return false;
-        }
+        m_intersectPosition = ray.origin + tmin * (ray.direction);
 
-        t = tmin;
-        return true;
+        return tmax >= glm::max(0.0, tmin);
 
     }

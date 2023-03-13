@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Headers\Camera.hpp" />
+    <ClInclude Include="..\..\src\Headers\Geometry.hpp" />
     <ClInclude Include="..\..\src\Headers\glitter.hpp" />
     <ClInclude Include="..\..\src\Headers\Gui.hpp" />
     <ClInclude Include="..\..\src\Headers\Mesh.hpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\src\Headers\MousePicker.hpp" />
     <ClInclude Include="..\..\src\Headers\Shader.hpp" />
     <ClInclude Include="..\..\src\Headers\Simulation.hpp" />
+    <ClInclude Include="..\..\src\Headers\util.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Sources\Camera.cpp" />
@@ -165,6 +167,7 @@
     <ClCompile Include="..\..\src\Sources\Shader.cpp" />
     <ClCompile Include="..\..\src\Sources\Simulation.cpp" />
     <ClCompile Include="..\..\src\Sources\stb_image.c" />
+    <ClCompile Include="..\..\src\Sources\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,7 +12,6 @@ Model::Model(GLchar* path)
 Model::Model(std::pair<const aiScene*, std::string> init)
 {
 	//m_id = uuid()
-
 	std::cout << "\nprocessing model ... ";
 
 	// Retrieve the directory path of the filepath
@@ -27,12 +26,16 @@ Model::Model(std::pair<const aiScene*, std::string> init)
 	std::cout << "done";
 }
 
+void Model::setTransform(glm::mat4 PVM) {
+	m_Transform = PVM;
+}
+
 // Draws the model, and thus all its meshes
 void Model::Draw(Shader shader)
-	{
-		for (GLuint i = 0; i < this->meshes.size(); i++)
-			this->meshes[i].Draw(shader);
-	}
+{
+	for (GLuint i = 0; i < this->meshes.size(); i++)
+		this->meshes[i].Draw(shader);
+}
 
 int Model::getNumMeshes()
 	{
@@ -48,8 +51,23 @@ bool Model::computeIntersectAABB(const Ray& ray)
 {
 	for (GLuint i = 0; i < this->meshes.size(); i++)
 		if (this->meshes[i].isIntersectAABB(ray)) 
+		{
+			m_intersectPosition = this->meshes[i].m_intersectPosition;
 			return true;
+		}
 	return false;
+}
+
+void Model::computeAABB()
+{
+	for (GLuint i = 0; i < this->meshes.size(); i++)
+		this->meshes[i].transformAABB(m_Transform);
+}
+
+void Model::DrawBoundingBox(Shader shader, glm::mat4 placement)
+{
+	for (GLuint i = 0; i < this->meshes.size(); i++)
+		this->meshes[i].DrawBoundingBox(shader, placement);
 }
 
 // Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -195,8 +213,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
 	}
 
+	glm::mat4 PVM = m_Transform;
+
 	// Return a mesh object created from the extracted mesh data
-	return Mesh(vertices, indices, textures, aabb);
+	return Mesh(vertices, indices, textures, aabb, PVM);
 }
 
 // Checks all material textures of a given type and loads the textures if they're not loaded yet.

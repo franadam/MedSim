@@ -21,7 +21,7 @@
 #include <thread>
 #include <future>
 #include <mutex>
-//#include <uuid>
+//#include <boost/uuid/uuid.hpp>
 
 
 // GL Includes
@@ -53,7 +53,8 @@ private:
 	std::vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 	int mNumMeshes;
 	int mNumFaces;
-	//uuid  m_id;
+	int  m_id;
+	glm::mat4 m_Transform;
 
 	/*  Functions   */
 	// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -81,7 +82,11 @@ public:
 	int getNumMeshes();
 	int getNumFaces();
 
+	void setTransform(glm::mat4 PVM);
 	bool computeIntersectAABB(const Ray& ray);
+	void computeAABB();
+	void DrawBoundingBox(Shader shader, glm::mat4 placement);
+	glm::vec3 m_intersectPosition;
 
 	static std::pair<const aiScene*, std::string> loadAIScene(const GLchar* path);
 	static std::future<std::pair<const aiScene*, std::string>> preload(const GLchar* path);

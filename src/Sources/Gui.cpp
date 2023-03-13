@@ -3,6 +3,7 @@
 #include <cstdlib>
 
 #include "../Headers/Gui.hpp"
+#include "../Headers/util.hpp"
 
 namespace gui {
 
@@ -30,6 +31,8 @@ namespace gui {
 	bool m_time1sElapsed = false;
 	double m_time1sLast = 0;
 	double m_time1sDelta = 0;
+
+	void (*mouseUserCallback)(void);
 
 	void initGLFW() {
 		// Load GLFW glfwInit()
@@ -155,6 +158,19 @@ namespace gui {
 		}
 	}
 
+	bool cylinder_draw = false;
+
+	void display() {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_MODELVIEW);
+	
+			glLoadIdentity();
+			glTranslatef(0.0, -0.4, -5.0);
+			glRotatef(-90, 0.4, 0.0, 0.0);
+			draw_cylinder(0.3, 1.0, 255, 160, 100);
+		
+	}
+
 	static void mouse_button_callback(GLFWwindow* /*window*/, int button, int action, int /*mods*/) {
 		//std::cout << "mouse_button_callback" << "\n";
 		//std::cout << button << action << "\n";
@@ -165,7 +181,18 @@ namespace gui {
 			m_keys[GLFW_MOUSE_BUTTON_RIGHT] = false;
 
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		{
 			m_keys[GLFW_MOUSE_BUTTON_LEFT] = true;
+			std::cout << "GLFW_MOUSE_BUTTON_LEFT" << std::endl;
+//			glColor3f(0.0, 0.5, 0.5);
+		/*	glClear(GL_COLOR_BUFFER_BIT);
+			glBegin(GL_POINTS);
+			glVertex3f(0.0f, 0.0f, 0.0f);
+			glVertex3f(50.0f, 40.0f, 0.0f);
+			glVertex3f(50.0f, 50.0f, 50.0f);
+			glEnd();*/
+//			drawCircle(gui::m_mouse_x, gui::m_mouse_y, 190, 360);
+		}
 		else
 			m_keys[GLFW_MOUSE_BUTTON_LEFT] = false;
 
@@ -173,6 +200,16 @@ namespace gui {
 			m_keys[GLFW_MOUSE_BUTTON_MIDDLE] = true;
 		else
 			m_keys[GLFW_MOUSE_BUTTON_MIDDLE] = false;
+
+		if (mouseUserCallback != NULL) {
+			std::cout << "mouseUserCallback()" << std::endl;
+			(*mouseUserCallback)();
+		}
+	}
+
+	void setMouseUserCallback(void (*cb)(void))
+	{
+		mouseUserCallback = cb;
 	}
 
 	void mouse_callback(GLFWwindow* /*window*/, double xpos, double ypos)
@@ -241,18 +278,18 @@ namespace gui {
 			std::cout << 1000.0 * m_time1sDelta / double(m_lastNbFrames) << " ms/frame -> " << m_lastNbFrames << " frames/sec" << std::endl;
 	}
 
-	void cameraControl(Camera& camera)
+	void cameraControl(Camera * camera)
 	{
-//		//std::cout << camera << "\n";
+		//std::cout << camera << "\n";
 		////std::cout << "cameraControl" << keys[GLFW_KEY_UP] << "\n";
 
 		if (m_keys[GLFW_MOUSE_BUTTON_RIGHT])
-			camera.ProcessMouseMovement(m_mouse_dx, -m_mouse_dy);
-		camera.ProcessKeyboard(m_keys[GLFW_KEY_UP] * FORWARD | m_keys[GLFW_KEY_DOWN] * BACKWARD
+			camera->ProcessMouseMovement(m_mouse_dx, -m_mouse_dy);
+		camera->ProcessKeyboard(m_keys[GLFW_KEY_UP] * FORWARD | m_keys[GLFW_KEY_DOWN] * BACKWARD
 			| m_keys[GLFW_KEY_LEFT] * LEFT | m_keys[GLFW_KEY_RIGHT] * RIGHT
 			| m_keys[GLFW_KEY_PAGE_UP] * UP | m_keys[GLFW_KEY_PAGE_DOWN] * DOWN, m_avgDeltaTime);
 
-		camera.ProcessMouseScroll(m_mouse_scroll_dy);
+		camera->ProcessMouseScroll(m_mouse_scroll_dy);
 		m_mouse_scroll_dy = 0;
 
 	}

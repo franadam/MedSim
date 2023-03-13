@@ -29,14 +29,15 @@
 #include "Model.hpp"
 #include "Camera.hpp"
 #include "MousePicker.hpp"
+#include "util.hpp"
 
 class Simulation
 {
-private:
+public:
 	///Variables
 
 	//Camera
-	Camera m_camera;
+	Camera * m_camera;
 
 	//Model
 	int m_id_model = -1;
@@ -57,8 +58,12 @@ private:
 	//Mouse picker
 	MousePicker m_picker;
 
+	GLuint worldAxisVAO = 0;
+	GLuint posTargetVAO = 0;
+	glm::mat4 posTargetPosition;
+
 	//Private functions
-	void initMatrices(Camera camera);
+	void initMatrices();
 	void initShaders();
 	void initModels();
 	void initUniforms(const GLchar* shaderName, glm::mat4 modelMatrix);
@@ -72,8 +77,8 @@ private:
 	void setShadeDirectLight(Shader pShader, glm::vec3 dirLightDirection, glm::vec3 dirLightAmbient, glm::vec3 dirLightDiffuse, glm::vec3 dirLightSpecular, glm::vec3 dirLightColor);
 	void initTextures();
 	void updateUniforms();
+	void renderDebug(glm::mat4 placement);
 
-public:
 	//Constructors / Destructors
 	Simulation(
 		const char* title,

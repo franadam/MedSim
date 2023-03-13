@@ -44,6 +44,6 @@ struct Face {
 
 struct Ray
 {
-	glm::vec3 direction;
-	glm::vec3 origine;
+	glm::dvec3 direction;
+	glm::dvec3 origin;
 };
