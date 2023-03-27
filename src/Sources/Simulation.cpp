@@ -1,14 +1,11 @@
 #include "../Headers/Simulation.hpp"
 
-void mouseCallback();
-Simulation* simu;
-
 void Simulation::initMatrices() {
 	std::cout << "initMatrices" << "\n";
 
-	m_camera = new Camera(glm::vec3(-1.0f, 1.0f, 1.0f));
+	m_camera = new Camera(glm::vec3(0.0f, -.10f, .40f));
 	m_ViewMatrix = m_camera->GetViewMatrix();
-	m_ProjectionMatrix = glm::perspective(m_camera->Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
+	m_ProjectionMatrix = glm::perspective(m_camera->Zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
 }
 
 void Simulation::initShaders() {
@@ -20,13 +17,14 @@ void Simulation::initShaders() {
 	//shaders["bumpShader"] = new Shader("Shaders/objectMappingShaderV.vert", "Shaders/objectMappingShaderF.frag");
 }
 
-
-
 void Simulation::initModels() {
 	std::cout << "initModels" << "\n";
 
 	std::vector<std::string> paths{
-		//"Models/Body/Adam_Bones.dae",
+		//"Models/Room/table.dae",
+		"Models/Room/Surgical_Room_deci.dae",
+		"Models/Body/Adam_Bones.dae",
+		"Models/Room/Scalpel.dae",
 		"Models/Body/Adam_Urimary_System.dae",
 		"Models/Body/Adam_Lungs.dae",
 		"Models/Body/Adam_Liver.dae",
@@ -38,7 +36,6 @@ void Simulation::initModels() {
 	for (auto& path : paths)
 		preloaded.emplace_back(Model::preload(path.c_str()));
 
-	/// Make the app reactive while loading the models
 	std::set< std::future<std::pair<const aiScene*, std::string>>* > loaded;
 	while (loaded.size() < preloaded.size()) {
 		for (auto& pre : preloaded)
@@ -50,16 +47,46 @@ void Simulation::initModels() {
 
 		/// Waiting animation here ...
 
-		glfwSwapBuffers(gui::m_window);
+		glfwSwapBuffers(gui::window);
 		glfwPollEvents();
 	}
+	glm::mat4 UnitMatrix = glm::mat4(1.0);
 
 	for (auto& pre : preloaded)
 		m_models.push_back(pre.get());
 
+	glm::vec3 translationBody = glm::vec3(-2.0f, -1.75f, -.750f); //glm::vec3(-60.0f, -40.0f, -10.0f);
+	glm::mat4 bodyModel = glm::translate(UnitMatrix, translationBody);
+	bodyModel = glm::scale(bodyModel, glm::vec3(0.03f));
+	for (int m = 0; m < m_models.size(); m++) {
+		m_models[m].setPosition(bodyModel);
+		m_models[m].setTransform(bodyModel);
+		m_models[m].transformAABB();
+	}
+
+	m_room = &m_models[0];
+	m_scalpel = &m_models[1];
+
+	glm::vec3 translationScalpel = glm::vec3(50.0f, -20.0f, -50.0f);
+	glm::mat4 scalpelModel = glm::translate(UnitMatrix, translationScalpel);
+
+	glm::vec3 translationRoom = glm::vec3(0.0f, 0.0f, -.0f);
+	glm::mat4 RoomModel = glm::translate(UnitMatrix, translationScalpel);
+	RoomModel = glm::scale(bodyModel, glm::vec3(3.50f));
+	//RoomModel = glm::rotate(RoomModel, glm::radians(90.0f), glm::vec3(-1.0, 0.0, 0.0));
+
+
+	std::cout << "translationRoom" << translationRoom.y << "\n";
+	m_room->setPosition(translationRoom);
+	//m_room->setPosition(UnitMatrix);
+
+	//m_scalpel->setPosition(translationScalpel);
+	//m_scalpel->setTransform(scalpelModel);
+	//m_scalpel->transformAABB();
+
 	worldAxisVAO = createWorldAxisVAO();
 	posTargetVAO = createPosTargetVAO();
-	posTargetPosition = glm::translate(glm::mat4(1), glm::vec3(gui::m_mouse_x, gui::m_mouse_y, 0));
+	posTargetPosition = glm::translate(glm::mat4(1), glm::vec3(gui::mouse_x, gui::mouse_y, 0));
 
 
 	std::cout << "\ndone importing all models\n\n";
@@ -124,20 +151,32 @@ void Simulation::initLights() {
 	initPointLights();
 };
 
-void Simulation::initPicker()
-{
-	std::cout << "initPicker" << "\n";
-	MousePicker picker = MousePicker(m_camera, m_ProjectionMatrix);
-	m_picker = picker;
-}
 
-void Simulation::updatePicker(glm::mat4 viewMat, glm::mat4 projectionMat)
-{
-	std::cout << "initMatrices" << "\n";
+//
+//void Simulation::initPhysics() {
+//	float Friction = 0.9;
+//	float Restitution = 0.5;
+//
+//	btBroadphaseInterface* broadphase;
+//	btDefaultCollisionConfiguration* collisionConfig;
+//	btCollisionDispatcher* dispatcher;
+//	btSequentialImpulseConstraintSolver* solver;
+//	btDiscreteDynamicsWorld* world;
+//	std::vector<btRigidBody*> bodies;
+//
+//	broadphase = new btDbvtBroadphase();
+//	collisionConfig = new btDefaultCollisionConfiguration();
+//	dispatcher = new btCollisionDispatcher(collisionConfig);
+//	solver = new btSequentialImpulseConstraintSolver;
+//	world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
+//	world->setGravity(btVector3(0, -10, 0));
+//
+//	btTransform t;
+//	t.setIdentity();
+//	t.setOrigin(btVector3(0, 0, 0));
+//	btMotionState* motion = new btDefaultMotionState(t);
+//}
 
-	m_ViewMatrix = m_camera->GetViewMatrix();
-	m_ProjectionMatrix = glm::perspective(m_camera->Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
-}
 //Constructors 
 Simulation::Simulation(
 	const char* title,
@@ -155,29 +194,21 @@ Simulation::Simulation(
 	gui::initFramebuffer();
 	gui::setCallbacks();
 	gui::initOpenGLOptions();
-	std::cout << gui::m_window << "\n";
+	std::cout << gui::window << "\n";
 
 	initMatrices();
 	initLights();
 	initShaders();
 	initModels();
-	initPicker();
 
 	std::cout << "glGetString(GL_VERSION) : " << glGetString(GL_VERSION) << "\n";
 
-	gui::setMouseUserCallback(mouseCallback);
-	simu = this;
-
-	//GLuint myCubeVAO = createCubeVAO();
-	//GLuint mySquareVAO = createSquareVAO();
-	//
-	//GLuint worldAxisVAO = createWorldAxisVAO();
 }
 
 // Destructors
 Simulation::~Simulation() {
 
-	glfwDestroyWindow(gui::m_window);
+	glfwDestroyWindow(gui::window);
 	glfwTerminate();
 
 	//for (size_t i = 0; i < shaders.size(); i++)
@@ -190,6 +221,56 @@ Simulation::~Simulation() {
 		//delete pointLights[i];
 }
 
+void Simulation::testIntersect(Ray ray) {
+	for (int m = 0; m < m_models.size(); m++) {
+		if (m_models[m].computeIntersectAABB(ray)) {
+			m_id_model = m;
+			m_models[m_id_model].m_isSelected = true;
+		}
+	}
+}
+
+void Simulation::modelsInteractions() {
+	static Ray lastRay;
+
+	Ray ray = m_camera->computeCurrentRay();
+	float mouse_x;
+	float mouse_y;
+
+	if (gui::keyDown[GLFW_MOUSE_BUTTON_LEFT] && m_id_model == -1)
+	{
+		testIntersect(ray);
+		mouse_x = gui::mouse_x;
+		mouse_x = gui::WINDOW_HEIGHT - gui::mouse_y;
+	}
+	else if (!gui::keyDown[GLFW_MOUSE_BUTTON_LEFT]) {
+		m_id_model = -1;
+	}
+	if (m_id_model != -1) {
+		moveModel();
+	}
+}
+
+void Simulation::moveModel() {
+	float mouse_x;
+	float mouse_y;
+
+	if (m_id_model != -1) {
+		std::cout << "grabbing " << m_id_model << "\n";
+
+		glm::vec3 originalVec = m_models[m_id_model].getPositionVector();
+
+		glm::vec3 world_delta = glm::vec3(gui::mouse_x, gui::WINDOW_HEIGHT - gui::mouse_y, 1) - originalVec;
+
+		m_models[m_id_model].setPosition(world_delta);
+
+		posTargetPosition = glm::translate(glm::mat4(1), world_delta);
+
+		m_models[m_id_model].setTransform(posTargetPosition);
+		m_models[m_id_model].transformAABB(); //computeAABB
+
+	}
+}
 
 void Simulation::update() {
 	//UPDATE --- 
@@ -201,29 +282,10 @@ void Simulation::update() {
 
 	/// interactions !
 	gui::updateMouseDisplacements();
-	gui::cameraControl(m_camera);
-	
-	//posTargetPosition = glm::translate(glm::mat4(1), glm::vec3(gui::m_mouse_x, gui::m_mouse_y, 0));
-	if(m_id_model!=-1) posTargetPosition = glm::translate(glm::mat4(1), m_models[m_id_model].m_intersectPosition);
+	gui::updateKeyPress();
+	m_camera->cameraControl();
 
-	//if (gui::m_keys[GLFW_MOUSE_BUTTON_LEFT] == true && m_id_model == -1) {
-	//	std::cout << "update : GLFW_MOUSE_BUTTON_LEFT" << "\n";
-
-	//	m_picker.update();
-	//	Ray ray = m_picker.getCurrentRay();
-
-	//	//selection model
-	//	for (int m = 0; m < m_models.size(); m++) {
-	//		if (m_models[m].computeIntersectAABB(ray)) {
-	//			m_id_model = m;
-
-	//		}
-	//	}
-
-	//	std::cout << "update : m_id_model" << m_id_model << "\n";
-	//}
-
-
+	modelsInteractions();
 
 	//Update the uniforms
 	//updateUniforms();
@@ -253,14 +315,8 @@ void Simulation::renderDebug(glm::mat4 placement) {
 	glBindVertexArray(0);
 
 	for (int m = 0; m < m_models.size(); m++)
-		m_models[m].DrawBoundingBox(*m_shaders["flatShader"], placement);
+		m_models[m].DrawBoundingBox(*m_shaders["flatShader"], glm::mat4(1));
 
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//glBegin(GL_POINTS);
-	//	glVertex3f(0.0f, 0.0f, 0.0f);
-	//	glVertex3f(50.0f, 40.0f, 0.0f);
-	//	glVertex3f(50.0f, 50.0f, 50.0f);
-	//glEnd();
 }
 
 
@@ -274,24 +330,19 @@ void Simulation::render() {
 
 
 	m_ViewMatrix = m_camera->GetViewMatrix();
-	m_ProjectionMatrix = glm::perspective(m_camera->Zoom, (float)gui::m_WINDOW_WIDTH / (float)gui::m_WINDOW_HEIGHT, 0.1f, 100.0f);
+	m_ProjectionMatrix = glm::perspective(m_camera->Zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
 
 	//Render models
 	glm::mat4 UnitMat = glm::mat4(1);
-	glm::mat4 RoomModel = glm::scale(UnitMat, glm::vec3(0.1));
+	//glm::mat4 RoomModel = glm::scale(UnitMat, glm::vec3(0.1));
 
-	RoomModel = glm::rotate(UnitMat, glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
-	RoomModel = glm::translate(RoomModel, glm::vec3(10.0f, -10.0f, -10.0f));
+	glm::vec3 translation = glm::vec3(10.0f, -10.0f, -10.0f);
+	glm::mat4 RoomModel = glm::translate(UnitMat, translation);
 
-	//for (int m = 0; m < m_models.size(); m++){
-	//	m_models[m].setTransform(RoomModel);
-	//	m_models[m].computeAABB();
-	//}
-
-	drawModels("lightingShader", RoomModel);
+	drawModels("lightingShader", UnitMat);
 	renderDebug(RoomModel);
 	//End Draw
-	glfwSwapBuffers(gui::m_window);
+	glfwSwapBuffers(gui::window);
 	// Flip Buffers and Draw
 	glfwPollEvents();
 }
@@ -314,29 +365,4 @@ void Simulation::setShadeDirectLight(Shader pShader, glm::vec3 dirLightDirection
 	pShader.setVector3f("dirLight.specular", dirLightSpecular);
 	pShader.setVector3f("dirLight.color", dirLightColor);
 
-}
-
-void mouseCallback()
-{
-	if (gui::m_keys[GLFW_MOUSE_BUTTON_LEFT] == true) {
-
-		std::cout << "***********************************************************************************" << std::endl;
-
-		simu->m_picker.update();
-		Ray ray = simu->m_picker.getCurrentRay();
-		std::cout << "Ray = x:" << ray.origin.x << "  y: " << ray.origin.y << "  z: " << ray.origin.z << std::endl;
-		std::cout << "Ray > x:" << ray.direction.x << "  y: " << ray.direction.y << "  z: " << ray.direction.z << std::endl;
-
-		//selection model
-		for (int m = 0; m < simu->m_models.size(); m++) {
-			std::cout << "---------------------------------------------------------" << std::endl;
-			if (simu->m_models[m].computeIntersectAABB(ray)) {
-				simu->m_id_model = m;
-				std::cout << "model = " << m << std::endl;
-			}
-		}
-
-		std::cout << "***********************************************************************************" << std::endl;
-
-	}
 }

@@ -2,25 +2,9 @@
 #ifndef _GEOMETRY_
 #define _GEOMETRY_
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
 
-// GL Includes
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-// Assimp Includes
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-
-
-#endif 
+// System Headers
+#include "glitter.hpp"
 
 struct Vertex {
 	glm::vec3 Position; // Position
@@ -47,3 +31,4 @@ struct Ray
 	glm::dvec3 direction;
 	glm::dvec3 origin;
 };
+#endif 

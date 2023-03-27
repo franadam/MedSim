@@ -2,14 +2,12 @@
 #ifndef _CAMERA_
 #define _CAMERA_
 
-// Std. Includes
-#include <vector>
+// System Headers
+#include "glitter.hpp"
 
-// GL Includes
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+// Local Headers
+#include "Geometry.hpp"
+#include "Gui.hpp"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -58,6 +56,10 @@ public:
     glm::mat4 GetProjectionMatrix(int width, int height);
 
     glm::vec3 getPosition();
+    void setPosition(glm::vec3 position);
+
+    void cameraControl();
+
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(unsigned int  direction, GLfloat deltaTime);
 
@@ -66,9 +68,14 @@ public:
 
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	void ProcessMouseScroll(GLfloat yoffset);
+    Ray computeCurrentRay();
+    Ray computeCurrentRay2();
 
 private:
     // Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors();
+    glm::vec3 normalisedCoordinates(double xpos, double ypos);
+    glm::vec4 eyeCoordinates(glm::vec4  homogeneousClip);
+    glm::vec3 worldCoordinates(glm::vec4  ray_eye);
 };
 #endif 

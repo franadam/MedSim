@@ -1,10 +1,5 @@
 #include "../Headers/Shader.hpp"
 
-#include <fstream>
-#include <sstream>
-
-#include <iostream>
-
 Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath, const GLchar *geometryPath, const GLchar *tessCPath, const GLchar *tessEPath) {
 	mVertexPath = vertexPath;
 	mFragmentPath = fragmentPath;

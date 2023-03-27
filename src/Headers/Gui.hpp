@@ -1,41 +1,44 @@
+#pragma once
+
 // Preprocessor Directives
 #ifndef GUI
 #define GUI
-#pragma once
 
 // System Headers
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glitter.hpp"
 
 // Local Headers
-//#include "glitter.hpp"
 #include "Camera.hpp"
 
 namespace gui {
 
 	//OpenGL Context
-	extern int m_WINDOW_WIDTH;
-	extern int m_WINDOW_HEIGHT;
-	extern const int m_GL_VERSION_MAJOR;
-	extern const int m_GL_VERSION_MINOR;
-	extern GLFWwindow* m_window;
+	extern int WINDOW_WIDTH;
+	extern int WINDOW_HEIGHT;
+	extern const int GL_VERSION_MAJOR;
+	extern const int GL_VERSION_MINOR;
+	
+	extern GLFWwindow* window;
 
-	extern bool m_keys[1024]; // is a key pressed or not ?
-	extern float m_mouse_dx, m_mouse_dy, m_mouse_scroll_dy;
-	extern float m_mouse_x, m_mouse_y;
-	extern bool m_mouse_moved;
+	extern bool keyDown[1024]; // is key down or not ?
+	extern bool prevKeyDown[1024]; // was key down or not ?
+	extern bool keyPressed[1024]; // was key pressed during last frame (one shot) ?
+	
+	extern float mouse_x, mouse_y;
+	extern float mouse_dx, mouse_dy, mouse_scroll_dy;
+	extern bool mouse_moved;
 
-	extern double m_timeApp;
-	extern double m_timeLast;
-	extern double m_timeDelta;
+	extern double timeApp;
+	extern double timeLast;
+	extern double timeDelta;
 
-	extern double m_avgDeltaTime;
-	extern int m_lastNbFrames;
+	extern double avgDeltaTime;
+	extern int lastNbFrames;
 
-	extern int m_time1sNbFrames;
-	extern bool m_time1sElapsed;
-	extern double m_time1sLast;
-	extern double m_time1sDelta;
+	extern int time1sNbFrames;
+	extern bool time1sElapsed;
+	extern double time1sLast;
+	extern double time1sDelta;
 
 	/// GLFW hooks
 	void initGLFW();
@@ -60,13 +63,11 @@ namespace gui {
 	void scroll_callback(GLFWwindow* window, double /*xoffset*/, double yoffset);
 
 	void updateMouseDisplacements();
+	void updateKeyPress();
 
 	/// Time management
 	void updateTime();
 	void showFPS();
-
-	/// Camera management
-	void cameraControl(Camera * camera);
 
 	void setMouseUserCallback(void (*cb)(void));
 	extern void (*mouseUserCallback)(void);

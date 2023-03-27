@@ -145,29 +145,33 @@
     <None Include="Shaders\skyboxShaderV.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Sources\App.cpp" />
+    <ClCompile Include="..\..\src\Sources\Camera.cpp" />
+    <ClCompile Include="..\..\src\Sources\Controller.cpp" />
+    <ClCompile Include="..\..\src\Sources\glad.c" />
+    <ClCompile Include="..\..\src\Sources\Gui.cpp" />
+    <ClCompile Include="..\..\src\Sources\main_scene.cpp" />
+    <ClCompile Include="..\..\src\Sources\Mesh.cpp" />
+    <ClCompile Include="..\..\src\Sources\Model.cpp" />
+    <ClCompile Include="..\..\src\Sources\Renderer.cpp" />
+    <ClCompile Include="..\..\src\Sources\Scene.cpp" />
+    <ClCompile Include="..\..\src\Sources\Shader.cpp" />
+    <ClCompile Include="..\..\src\Sources\stb_image.c" />
+    <ClCompile Include="..\..\src\Sources\util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Headers\App.hpp" />
     <ClInclude Include="..\..\src\Headers\Camera.hpp" />
+    <ClInclude Include="..\..\src\Headers\Controller.hpp" />
     <ClInclude Include="..\..\src\Headers\Geometry.hpp" />
     <ClInclude Include="..\..\src\Headers\glitter.hpp" />
     <ClInclude Include="..\..\src\Headers\Gui.hpp" />
     <ClInclude Include="..\..\src\Headers\Mesh.hpp" />
     <ClInclude Include="..\..\src\Headers\Model.hpp" />
-    <ClInclude Include="..\..\src\Headers\MousePicker.hpp" />
+    <ClInclude Include="..\..\src\Headers\Renderer.hpp" />
+    <ClInclude Include="..\..\src\Headers\Scene.hpp" />
     <ClInclude Include="..\..\src\Headers\Shader.hpp" />
-    <ClInclude Include="..\..\src\Headers\Simulation.hpp" />
     <ClInclude Include="..\..\src\Headers\util.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\Sources\Camera.cpp" />
-    <ClCompile Include="..\..\src\Sources\glad.c" />
-    <ClCompile Include="..\..\src\Sources\Gui.cpp" />
-    <ClCompile Include="..\..\src\Sources\main_simulation.cpp" />
-    <ClCompile Include="..\..\src\Sources\Mesh.cpp" />
-    <ClCompile Include="..\..\src\Sources\Model.cpp" />
-    <ClCompile Include="..\..\src\Sources\MousePicker.cpp" />
-    <ClCompile Include="..\..\src\Sources\Shader.cpp" />
-    <ClCompile Include="..\..\src\Sources\Simulation.cpp" />
-    <ClCompile Include="..\..\src\Sources\stb_image.c" />
-    <ClCompile Include="..\..\src\Sources\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

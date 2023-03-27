@@ -1,22 +1,9 @@
 #pragma once
 #ifndef _MESH_
 #define _MESH_
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
 
-// GL Includes
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-// Assimp Includes
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+// System Headers
+#include "glitter.hpp"
 
 // Local Headers
 #include "Shader.hpp"
@@ -34,6 +21,7 @@ public:
     std::vector<Face> faces;
     aiAABB m_aabb;
     glm::dvec3 m_intersectPosition = glm::dvec3(0);
+    double m_tmin;
     GLuint boundingBoxVAO = 0;
 
     /*  Functions  */
@@ -47,7 +35,6 @@ public:
     bool isIntersectAABB(const Ray& ray);
     void computeAABB(glm::mat4 PVM);
     void transformAABB(glm::mat4 PVM);
-    void draw_bbox();
     bool testIntersect(Ray worldRay);
     void DrawBoundingBox(Shader& shader, glm::mat4 placement);
 	GLuint getVAO();
@@ -57,7 +44,6 @@ private:
     GLuint VAO, VBO, EBO;
 
     /*  Functions    */
-    glm::vec3 Mesh::n_inv(glm::vec3 vector);
     // Initializes all the buffer objects/arrays
 	void setupMesh();
 };

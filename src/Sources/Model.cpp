@@ -3,11 +3,19 @@
 
 /*  Functions   */
 // Constructor, expects a filepath to a 3D model.
-Model::Model(GLchar* path)
-{
-	this->loadModel(path);
-	//m_id = uuid()
-}
+//Model::Model(GLchar* path)
+//{
+//	this->loadModel(path);
+//	m_position = glm::mat4(1);
+//	m_isSelected = false;
+//	std::string name = (std::string)path;
+//	name = name.substr(name.find_last_of("/") + 1);
+//	m_name = name = name.substr(0, name.find_last_of('.'));
+//	std::cout << "\n  model name" << name << "\n\n";
+//	std::cout << "\n  model m_name" << m_name << "\n\n";
+//
+//	//m_id = uuid()
+//}
 
 Model::Model(std::pair<const aiScene*, std::string> init)
 {
@@ -16,6 +24,14 @@ Model::Model(std::pair<const aiScene*, std::string> init)
 
 	// Retrieve the directory path of the filepath
 	directory = init.second;
+
+	//std::string name = (std::string)directory;
+	//name = name.substr(name.find_last_of("/") + 1);
+	//m_name = name = name.substr(0, name.find_last_of('.'));
+	//std::cout << "\n  model name " << name << "\n\n";
+	//std::cout << "\n  model m_name " << m_name << "\n\n";
+
+	m_position = glm::mat4(1);
 
 	// Process ASSIMP's root node recursively
 	const aiScene* scene = init.first;
@@ -30,9 +46,27 @@ void Model::setTransform(glm::mat4 PVM) {
 	m_Transform = PVM;
 }
 
+void Model::setPosition(glm::vec3 translation) {
+	m_translation = translation;
+	m_position = glm::translate(glm::mat4(1), translation);
+}
+
+void Model::setPosition(glm::mat4 position) {
+	m_position = position;
+}
+
+glm::mat4 Model::getPositionMatrix() {
+	return m_position;
+}
+
+glm::vec3 Model::getPositionVector() {
+	return m_translation;
+}
+
 // Draws the model, and thus all its meshes
 void Model::Draw(Shader shader)
 {
+	shader.setMatrix4("Model", m_position);
 	for (GLuint i = 0; i < this->meshes.size(); i++)
 		this->meshes[i].Draw(shader);
 }
@@ -53,15 +87,22 @@ bool Model::computeIntersectAABB(const Ray& ray)
 		if (this->meshes[i].isIntersectAABB(ray)) 
 		{
 			m_intersectPosition = this->meshes[i].m_intersectPosition;
+			m_tmin = this->meshes[i].m_tmin;
 			return true;
 		}
 	return false;
 }
 
-void Model::computeAABB()
+void Model::transformAABB()
 {
 	for (GLuint i = 0; i < this->meshes.size(); i++)
 		this->meshes[i].transformAABB(m_Transform);
+}
+
+void Model::computeAABB()
+{
+	for (GLuint i = 0; i < this->meshes.size(); i++)
+		this->meshes[i].computeAABB(m_Transform);
 }
 
 void Model::DrawBoundingBox(Shader shader, glm::mat4 placement)
@@ -71,29 +112,29 @@ void Model::DrawBoundingBox(Shader shader, glm::mat4 placement)
 }
 
 // Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-void Model::loadModel(std::string path)
-{
-	// Read file via ASSIMP 
-	static std::mutex assMutex;
-	assMutex.lock();
-	Assimp::Importer importer;
-	assMutex.unlock();
-
-	//aiProcess_GenBoundingBoxes 
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes);
-
-	// Check for errors
-	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
-	{
-		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-		return;
-	}
-	// Retrieve the directory path of the filepath
-	this->directory = path.substr(0, path.find_last_of('/'));
-
-	// Process ASSIMP's root node recursively
-	this->processNode(scene->mRootNode, scene);
-}
+//void Model::loadModel(std::string path)
+//{
+//	// Read file via ASSIMP 
+//	static std::mutex assMutex;
+//	assMutex.lock();
+//	Assimp::Importer importer;
+//	assMutex.unlock();
+//
+//	//aiProcess_GenBoundingBoxes 
+//	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes);
+//
+//	// Check for errors
+//	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+//	{
+//		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+//		return;
+//	}
+//	// Retrieve the directory path of the filepath
+//	this->directory = path.substr(0, path.find_last_of('/'));
+//
+//	// Process ASSIMP's root node recursively
+//	this->processNode(scene->mRootNode, scene);
+//}
 
 // Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -125,10 +166,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 	std::vector<Face> faces;
-	aiAABB aabb;
-
-	// AABB
-	aabb = mesh->mAABB;
 
 	// Walk through each of the mesh's vertices
 	for (GLuint i = 0; i < mesh->mNumVertices; i++)
@@ -213,10 +250,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
 	}
 
-	glm::mat4 PVM = m_Transform;
-
 	// Return a mesh object created from the extracted mesh data
-	return Mesh(vertices, indices, textures, aabb, PVM);
+	return Mesh(vertices, indices, textures);
 }
 
 // Checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -250,12 +285,6 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		}
 	}
 	return textures;
-}
-
-// factory
-static Model create(GLchar* path)
-{
-	return Model(path);
 }
 
 // preconstructor !

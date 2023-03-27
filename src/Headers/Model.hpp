@@ -2,40 +2,16 @@
 #ifndef _MODEL_
 #define _MODEL_
 
-//#include "glitter.hpp"
 // Reference: https://github.com/nothings/stb/blob/master/stb_image.h#L4
 // To use stb_image, add this in *one* C++ source file.
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <map>
-#include <vector>
-
-#include <future>
-#include <utility>
-#include <thread>
-#include <future>
-#include <mutex>
-//#include <boost/uuid/uuid.hpp>
-
-
-// GL Includes
-#include <glad/glad.h> // Contains all the necessery OpenGL includes
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+// System Headers
+#include "glitter.hpp"
 
 // Local Headers
 #include "Mesh.hpp"
-
-#endif 
 
 // Helper to do things while loading...
 // https://stackoverflow.com/a/10917945
@@ -55,6 +31,7 @@ private:
 	int mNumFaces;
 	int  m_id;
 	glm::mat4 m_Transform;
+	glm::mat4 m_position;
 
 	/*  Functions   */
 	// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -71,6 +48,12 @@ private:
 	GLint TextureFromFile(const char* path, std::string directory);
 
 public:
+	glm::vec3 m_intersectPosition;
+	glm::vec3 m_translation;
+	double m_tmin;
+	bool m_isSelected;
+	std::string m_name;
+
 	/*  Functions   */
 	// Constructor, expects a filepath to a 3D model.
 	Model(GLchar* path);
@@ -83,12 +66,17 @@ public:
 	int getNumFaces();
 
 	void setTransform(glm::mat4 PVM);
+	void setPosition(glm::vec3 translation);
+	void setPosition(glm::mat4 position);
+	glm::mat4 getPositionMatrix();
+	glm::vec3 getPositionVector();
 	bool computeIntersectAABB(const Ray& ray);
 	void computeAABB();
+	void transformAABB();
 	void DrawBoundingBox(Shader shader, glm::mat4 placement);
-	glm::vec3 m_intersectPosition;
-
 	static std::pair<const aiScene*, std::string> loadAIScene(const GLchar* path);
 	static std::future<std::pair<const aiScene*, std::string>> preload(const GLchar* path);
 
 };
+
+#endif 

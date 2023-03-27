@@ -3,11 +3,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <string>
-
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+// System Headers
+#include "glitter.hpp"
 
 // Simple shader class from http://www.learnopengl.com/ with a few tweaks
 class Shader {
@@ -17,6 +14,7 @@ public:
 
 	// Constructor
 	Shader(const GLchar *vertexSource, const GLchar *fragmentSource, const GLchar *geometrySource = nullptr, const GLchar *tessCPath = nullptr, const GLchar *tessEPath = nullptr);
+	Shader() = default;
 	// Sets the current shader as active, do we need to return?
 	Shader& use();
 

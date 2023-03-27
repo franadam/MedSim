@@ -1,9 +1,9 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
 
-#include <assimp/postprocess.h>
-#include "../Headers/Gui.hpp"
+// System Headers
+#include "glitter.hpp"
+
+// Local Headers
+//#include "Gui.hpp"
 
 // VAO
 GLuint createTriangleVAO();
@@ -22,6 +22,12 @@ void draw_cylinder(GLfloat radius,
 	GLubyte R,
 	GLubyte G,
 	GLubyte B);
+
+GLuint createVertColVAO_ext(const GLfloat* vertices, size_t sizeVertices,
+	const GLfloat* colors, size_t sizeColors);
+
+GLuint createPosColTexVAOEBO_ext(const GLfloat* vertices, size_t sizeVertices,
+	const GLuint* indices, size_t sizeIndices);
 
 // from https://stackoverflow.com/a/9443982
 template <unsigned int N>
