@@ -8,6 +8,7 @@
 // Local Headers
 #include "Gui.hpp"
 #include "Controller.hpp"
+#include "Physics.hpp"
 #include "Renderer.hpp"
 
 class App
@@ -28,7 +29,8 @@ public:
 
 private:
 	///Variables
-	Renderer* m_renderer;
+	renderer::Renderer* m_renderer;
+	physics::Physics* m_physics;
 	Controller* m_controller;
 
 	void update();

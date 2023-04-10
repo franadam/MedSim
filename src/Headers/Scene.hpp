@@ -10,26 +10,33 @@
 #include "Shader.hpp"
 #include "Model.hpp"
 
-class Scene
+namespace resource
 {
-public:
-	//Models
-	std::vector<Model> m_models;
-	Model* m_room;
-	Model* m_scalpel;
-	glm::vec3 m_lightPosition;
-	glm::vec3 m_lightColor;
 
-	Scene(const char* title, bool resizable);
-	Scene() = default;
-	~Scene();
-	void addObject(Model* model, glm::vec3 position);
+	class Scene
+	{
+	public:
+		//Models
+		std::vector<Model> m_models;
+		Model* m_room;
+		Model* m_scalpel;
+		glm::vec3 m_lightPosition;
+		glm::vec3 m_lightColor;
 
-private:
+		Scene(const char* title, bool resizable);
+		Scene() = default;
+		~Scene();
+		Model* findModel(std::string name);
+		std::vector<Model*> findModels(std::string name);
+		void addObject(Model* model, glm::vec3 position);
 
-	void initModels();
-	void initPointLights();
-	void initLights();
-};
+	private:
+
+		void initModels();
+		void initPointLights();
+		void initLights();
+		//void initPicker();
+	};
+}
 
 #endif

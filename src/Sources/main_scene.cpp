@@ -1,5 +1,4 @@
 // Local Headers
-#include "../Headers/Gui.hpp"
 #include "../Headers/App.hpp"
 
 int main()

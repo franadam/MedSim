@@ -26,7 +26,7 @@ subject to the following restrictions:
 
 /* SVN $Revision$ on $Date$ from http://bullet.googlecode.com*/
 #define BT_BULLET_VERSION 325
-
+#define BT_USE_DOUBLE_PRECISION = 1;
 inline int btGetVersion()
 {
 	return BT_BULLET_VERSION;

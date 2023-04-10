@@ -6,52 +6,58 @@
 // System Headers
 #include "glitter.hpp"
 
-// Simple shader class from http://www.learnopengl.com/ with a few tweaks
-class Shader {
-public:
-	// State
-	GLuint ID;
+namespace resource
 
-	// Constructor
-	Shader(const GLchar *vertexSource, const GLchar *fragmentSource, const GLchar *geometrySource = nullptr, const GLchar *tessCPath = nullptr, const GLchar *tessEPath = nullptr);
-	Shader() = default;
-	// Sets the current shader as active, do we need to return?
-	Shader& use();
+{
+	// Simple shader class from http://www.learnopengl.com/ with a few tweaks
+	class Shader {
+	public:
+		// State
+		GLuint ID;
 
-	// Not sure compile should be it's own step separate from constructor
-	void compile();
+		// Constructor
+		Shader(const GLchar* vertexSource, const GLchar* fragmentSource, const GLchar* geometrySource = nullptr, const GLchar* tessCPath = nullptr, const GLchar* tessEPath = nullptr);
+		Shader() = default;
+		~Shader();
 
-	void setFloat(const std::string &name, GLfloat value);
-	void setFloat(const GLchar *name, GLfloat value);
-	void setInteger(const GLchar *name, GLint value);
+		// Sets the current shader as active, do we need to return?
+		Shader& use();
 
-	void setVector2f(const GLchar *name, GLfloat x, GLfloat y);
-	void setVector2f(const GLchar *name, const glm::vec2 &value);
+		// Not sure compile should be it's own step separate from constructor
+		void compile();
 
-	void setVector3f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z);
-	void setVector3f(const GLchar *name, const glm::vec3 &value);
-	void setVector3f(const std::string &name, GLfloat x, GLfloat y, GLfloat z);
-	void setVector3f(const  std::string &name, const glm::vec3 &value);
+		void setFloat(const std::string& name, GLfloat value);
+		void setFloat(const GLchar* name, GLfloat value);
+		void setInteger(const GLchar* name, GLint value);
 
-	void setVector4f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-	void setVector4f(const GLchar *name, const glm::vec4 &value);
+		void setVector2f(const GLchar* name, GLfloat x, GLfloat y);
+		void setVector2f(const GLchar* name, const glm::vec2& value);
 
-	void setMatrix4(const GLchar *name, const glm::mat4 &matrix);
-private:
-	// Checks if compilation or linking failed and if so, print the error logs
-	void checkCompileErrors(const GLuint &object, std::string type);
+		void setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z);
+		void setVector3f(const GLchar* name, const glm::vec3& value);
+		void setVector3f(const std::string& name, GLfloat x, GLfloat y, GLfloat z);
+		void setVector3f(const  std::string& name, const glm::vec3& value);
 
-	// Make a shader from a filepath
-	GLuint pathToShader(const GLchar * path, GLenum shaderType);
+		void setVector4f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+		void setVector4f(const GLchar* name, const glm::vec4& value);
 
-	// Get a string of the shader type from the GLenum
-	std::string shaderTypeToString(GLenum shaderType);
+		void setMatrix4(const GLchar* name, const glm::mat4& matrix);
+	private:
+		// Checks if compilation or linking failed and if so, print the error logs
+		void checkCompileErrors(const GLuint& object, std::string type);
 
-	const GLchar* mVertexPath;
-	const GLchar* mFragmentPath;
-	const GLchar* mGeometryPath;
-	const GLchar* mTessCPath;
-	const GLchar* mTessEPath;
-};
+		// Make a shader from a filepath
+		GLuint pathToShader(const GLchar* path, GLenum shaderType);
+
+		// Get a string of the shader type from the GLenum
+		std::string shaderTypeToString(GLenum shaderType);
+
+		const GLchar* m_vertexPath;
+		const GLchar* m_fragmentPath;
+		const GLchar* m_geometryPath;
+		const GLchar* m_tessCPath;
+		const GLchar* m_tessEPath;
+	};
+}
 
 #endif

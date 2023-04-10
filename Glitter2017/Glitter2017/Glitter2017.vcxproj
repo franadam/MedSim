@@ -93,12 +93,18 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <SDLCheck>true</SDLCheck>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\..\vendors\includes\bullet</AdditionalIncludeDirectories>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\vendors\libs\Debug\lib\assimp-vc143-mt.lib;..\..\vendors\libs\Debug\lib\glfw3.lib;..\..\vendors\libs\Debug\lib\IrrXML.lib;..\..\vendors\libs\Debug\lib\irrKlang\irrKlang.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletDynamics_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\BulletSoftBody_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\Debug\LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\vendors\libs\Debug\lib\assimp-vc143-mtd.lib;..\..\vendors\libs\Debug\lib\glfw3.lib;..\..\vendors\libs\Debug\lib\IrrXML.lib;..\..\vendors\libs\Debug\lib\irrKlang.lib;..\..\vendors\libs\Debug\lib\bullet\BulletCollision_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\BulletDynamics_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\LinearMath_Debug.lib;..\..\vendors\libs\Debug\lib\bullet\BulletSoftBody_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -122,12 +128,16 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\vendors\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\vendors\includes\bullet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\..\vendors\libs\Release\lib\assimp-vc143-mt.lib;..\..\vendors\libs\Release\lib\glfw3_mt.lib;..\..\vendors\libs\Release\lib\IrrXML.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\vendors\libs\Release\lib\assimp-vc143-mt.lib;..\..\vendors\libs\Release\lib\glfw3_mt.lib;..\..\vendors\libs\Release\lib\IrrXML.lib;..\..\vendors\libs\Release\lib\irrKlang.lib;..\..\vendors\libs\Release\lib\bullet\BulletCollision.lib;..\..\vendors\libs\Release\lib\bullet\BulletDynamics.lib;..\..\vendors\libs\Release\lib\bullet\BulletSoftBody.lib;..\..\vendors\libs\Release\lib\bullet\LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,9 +160,11 @@
     <ClCompile Include="..\..\src\Sources\Controller.cpp" />
     <ClCompile Include="..\..\src\Sources\glad.c" />
     <ClCompile Include="..\..\src\Sources\Gui.cpp" />
+    <ClCompile Include="..\..\src\Sources\main.cpp" />
     <ClCompile Include="..\..\src\Sources\main_scene.cpp" />
     <ClCompile Include="..\..\src\Sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\Sources\Model.cpp" />
+    <ClCompile Include="..\..\src\Sources\Physics.cpp" />
     <ClCompile Include="..\..\src\Sources\Renderer.cpp" />
     <ClCompile Include="..\..\src\Sources\Scene.cpp" />
     <ClCompile Include="..\..\src\Sources\Shader.cpp" />
@@ -168,6 +180,7 @@
     <ClInclude Include="..\..\src\Headers\Gui.hpp" />
     <ClInclude Include="..\..\src\Headers\Mesh.hpp" />
     <ClInclude Include="..\..\src\Headers\Model.hpp" />
+    <ClInclude Include="..\..\src\Headers\Physics.hpp" />
     <ClInclude Include="..\..\src\Headers\Renderer.hpp" />
     <ClInclude Include="..\..\src\Headers\Scene.hpp" />
     <ClInclude Include="..\..\src\Headers\Shader.hpp" />

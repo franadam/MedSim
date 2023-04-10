@@ -3,6 +3,9 @@
 #ifndef _CONTROLLER_
 #define _CONTROLLER_
 
+//Bullet
+//#include "bullet/btBulletCollisionCommon.h"
+//#include "bullet/btBulletDynamicsCommon.h"
 
 // Local Headers
 #include "Gui.hpp"
@@ -12,15 +15,16 @@
 class Controller
 {
 public:
-	Controller(Camera* camera, Scene* scene);
+	Controller(renderer::Camera* camera, resource::Scene* scene);
 	Controller() = default;
+	~Controller();
 
 	void modelsInteractions();
 	void update();
 
 private:
-	Scene* m_scene;
-	Camera* m_camera;
+	resource::Scene* m_scene;
+	renderer::Camera* m_camera;
 	glm::mat4 posTargetPosition;
 	int m_id_model = -1;
 	Ray m_ray;
