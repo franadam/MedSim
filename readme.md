@@ -9,6 +9,10 @@ These components are designed to also allowing for easy customization and scalab
 
 Furthermore, I have also implemented a number of optimization techniques to ensure that the simulation runs smoothly and efficiently.
 
+
+![Room](screenshots/med_sim_01.png)
+
+
 ## Dependencies
 
 | Functionality             | Library  |
@@ -21,7 +25,7 @@ Furthermore, I have also implemented a number of optimization techniques to ensu
 | Texture Loading          | [stb](https://github.com/nothings/stb)|
 
 
-![Room](screenshots/med_sim_01.png)
+
 
 ## TODO
 - Integrate the physics
