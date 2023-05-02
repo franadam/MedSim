@@ -23,9 +23,9 @@ namespace resource
 		glm::vec3 m_lightPosition;
 		glm::vec3 m_lightColor;
 
-		Scene(const char* title, bool resizable);
-		Scene() = default;
+		Scene();
 		~Scene();
+
 		Model* findModel(std::string name);
 		std::vector<Model*> findModels(std::string name);
 		void addObject(Model* model, glm::vec3 position);
@@ -35,7 +35,6 @@ namespace resource
 		void initModels();
 		void initPointLights();
 		void initLights();
-		//void initPicker();
 	};
 }
 

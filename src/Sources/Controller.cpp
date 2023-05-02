@@ -9,62 +9,62 @@ Controller::Controller(renderer::Camera* camera, resource::Scene* scene) {
 
 Controller::~Controller()
 {
-	delete m_scene;
-	delete m_camera;
 }
-;
-
 
 void Controller::update() {
+
+	glfwPollEvents();
+	gui::updateTime();
+
+	//gui::showFPS();
 	gui::updateMouseDisplacements();
 	gui::updateKeyPress();
 
+	//if (gui::keyDown[GLFW_KEY_ENTER])
+	//	m_scene->m_models[3].setPosition(glm::vec3(0));
+
+	m_camera->cameraControl();
 	modelsInteractions();
+
+	// todo : m_physics est géré par la controller, pas par le renderer
+	// m_physics->update(1.0 / 60.0);
 }
 
 void Controller::testIntersect(Ray ray) {
 	for (int m = 0; m < m_scene->m_models.size(); m++) {
 		if (m_scene->m_models[m].computeIntersectAABB(ray)) {
 			m_id_model = m;
-			m_scene->m_models[m_id_model].m_isSelected = true;
 		}
 	}
 }
 
 void Controller::modelsInteractions() {
 	static Ray lastRay;
+	static double distanceIntersect;
 
 	Ray ray = m_camera->computeCurrentRay();
-	float mouse_x;
-	float mouse_y;
 
 	if (gui::keyDown[GLFW_MOUSE_BUTTON_LEFT] && m_id_model == -1)
-	{
+	{   
 		testIntersect(ray);
-		mouse_x = gui::mouse_x;
-		mouse_x = gui::WINDOW_HEIGHT - gui::mouse_y;
+		if (m_id_model != -1) {
+			std::cout << "grabbing " << m_scene->m_models[m_id_model].getName() << "\n";
+			lastRay = ray;
+			distanceIntersect = glm::distance(m_camera->getPosition(), m_scene->m_models[m_id_model].m_intersectPosition);
+		}
 	}
 	else if (!gui::keyDown[GLFW_MOUSE_BUTTON_LEFT]) {
+		if (m_id_model != -1)
+			std::cout << "releasing " << m_scene->m_models[m_id_model].getName() << "\n";
 		m_id_model = -1;
 	}
 	if (m_id_model != -1) {
-		moveModel();
+		moveModel( distanceIntersect*(ray.direction-lastRay.direction) );
+		lastRay = ray;
 	}
 }
 
-void Controller::moveModel() 
+void Controller::moveModel(glm::vec3 shift)
 {
-	std::cout << "grabbing " << m_scene->m_models[m_id_model].getName() << "\n";
-	//std::cout << "releasing " << m_scene->m_models[m_id_model].getName() << "\n";
-
-	glm::vec3 originalVec = m_scene->m_models[m_id_model].getPositionVector();
-
-	glm::vec3 world_delta = glm::vec3(gui::mouse_x, gui::WINDOW_HEIGHT - gui::mouse_y, 1) - originalVec;
-
-		m_scene->m_models[m_id_model].setPosition(world_delta);
-
-	posTargetPosition = glm::translate(glm::mat4(1), world_delta);
-
-	m_scene->m_models[m_id_model].setTransform(posTargetPosition);
-	m_scene->m_models[m_id_model].transformAABB(); //computeAABB
+	m_scene->m_models[m_id_model].shiftPosition(shift);
 }

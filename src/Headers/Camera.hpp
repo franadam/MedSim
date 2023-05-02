@@ -8,6 +8,7 @@
 // Local Headers
 #include "Geometry.hpp"
 #include "Gui.hpp"
+
 namespace renderer
 {
 
@@ -73,12 +74,18 @@ namespace renderer
         Ray computeCurrentRay();
         Ray computeCurrentRay2();
 
+        Ray screenToWorldRay(float screenX, float screenY);
+        Ray mouseToWorldRay();
+
     private:
         // Calculates the front vector from the Camera's (updated) Eular Angles
         void updateCameraVectors();
         glm::vec3 normalisedCoordinates(double xpos, double ypos);
         glm::vec4 eyeCoordinates(glm::vec4  homogeneousClip);
         glm::vec3 worldCoordinates(glm::vec4  ray_eye);
+
+        
+
     };
 }
 #endif 

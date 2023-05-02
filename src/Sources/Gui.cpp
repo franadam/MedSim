@@ -70,7 +70,6 @@ namespace gui {
 		//std::cout << "this->WINDOW_HEIGHT : " << WINDOW_HEIGHT << "\n";
 
 		glfwGetFramebufferSize(window, &WINDOW_WIDTH, &WINDOW_HEIGHT);
-		//glViewport(0, 0, this->WINDOW_WIDTH, this->WINDOW_HEIGHT);
 		glfwSetFramebufferSizeCallback(window, framebuffer_resize_callback);
 	};
 
@@ -80,7 +79,7 @@ namespace gui {
 	};
 
 	int initGlad() {
-		glfwMakeContextCurrent(window); //IMPORTANT!!
+		glfwMakeContextCurrent(window); 
 		gladLoadGL();
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

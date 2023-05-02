@@ -54,6 +54,12 @@
     <None Include="Shaders\BumpMappingShaderV.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\flat.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\flat.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Sources\App.cpp">
@@ -69,9 +75,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Sources\Gui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Sources\main_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Sources\Mesh.cpp">
@@ -95,10 +98,10 @@
     <ClCompile Include="..\..\src\Sources\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Sources\main.cpp">
+    <ClCompile Include="..\..\src\Sources\Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Sources\Physics.cpp">
+    <ClCompile Include="..\..\src\Sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,16 +23,18 @@ public:
 	);
 	virtual ~App();
 
-
 	//Functions
 	void run();
 
 private:
 	///Variables
 	renderer::Renderer* m_renderer;
-	physics::Physics* m_physics;
+	renderer::Camera* m_camera;
+	resource::Scene* m_scene;
 	Controller* m_controller;
+	//physics::Physics* m_physics;
 
+	void initOpenGL(const char* title, bool resizable);
 	void update();
 	void render();
 

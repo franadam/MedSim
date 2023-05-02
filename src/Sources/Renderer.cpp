@@ -7,21 +7,18 @@ namespace renderer
 	{
 		m_scene = scene;
 		m_camera = camera;
-		m_physics = physics;
+		//m_physics = physics;
 
 		initShaders();
 
-		worldAxisVAO = createWorldAxisVAO();
-		posTargetVAO = createPosTargetVAO();
-		posTargetPosition = glm::translate(glm::mat4(1), glm::vec3(gui::mouse_x, gui::mouse_y, 0));
-
-
+		worldAxisVAO = utils::createWorldAxisVAO();
+		posTargetVAO = utils::createPosTargetVAO();
+		//posTargetPosition = glm::translate(glm::mat4(1), glm::vec3(gui::mouse_x, gui::mouse_y, 0));
+		
 	}
 
 	Renderer::~Renderer() {
-		delete m_scene;
-		delete m_camera;
-		delete m_physics;
+		//delete m_physics;
 	}
 
 	void Renderer::initMatrices() {
@@ -34,7 +31,6 @@ namespace renderer
 	void Renderer::initShaders() {
 		std::cout << "initShaders" << "\n";
 
-		//shaders["skyboxShader"] = new Shader("Shaders/skyboxShaderV.vert", "Shaders/skyboxShaderF.frag");
 		m_shaders["lightingShader"] = new resource::Shader("Shaders/advancedLightingMapShaderV.vert", "Shaders/advancedLightingMapShaderF.frag");
 		m_shaders["flatShader"] = new resource::Shader("Shaders/flat.vert", "Shaders/flat.frag");
 		//shaders["bumpShader"] = new Shader("Shaders/objectMappingShaderV.vert", "Shaders/objectMappingShaderF.frag");
@@ -54,6 +50,14 @@ namespace renderer
 		m_shaders[shaderName]->setVector3f("viewPos", m_camera->m_position);
 	}
 
+	void Renderer::DrawBoundingBox(resource::Shader& shader, glm::mat4 placement, GLuint BoxVAO)
+	{
+		shader.setMatrix4("Model", placement);
+		glBindVertexArray(BoxVAO);
+		glDrawArrays(GL_LINES, 0, 24);
+		glBindVertexArray(0);
+	}
+
 	void Renderer::drawModels(const GLchar* shaderName, glm::mat4 modelMatrix) {
 		//std::cout << "drawModel" << "\n";
 		setUniforms(shaderName, modelMatrix);
@@ -62,11 +66,12 @@ namespace renderer
 			m_scene->m_models[m].Draw(*m_shaders[shaderName]);
 	}
 
-	void Renderer::drawModel(const size_t pos, const GLchar* shaderName, glm::mat4 modelMatrix) {
+	int Renderer::drawModel(std::string name, const GLchar* shaderName, glm::mat4 modelMatrix) {
 		//std::cout << "drawModel" << "\n";
 		setUniforms(shaderName, modelMatrix);
-
-		m_scene->m_models.at(pos).Draw(*m_shaders[shaderName]);
+		resource::Model* model = m_scene->findModel(name);
+		if(model == nullptr) return NULL;
+		model->Draw(*m_shaders[shaderName]);		
 	}
 
 	// set Shader
@@ -78,20 +83,6 @@ namespace renderer
 		myShader.setMatrix4("View", matView);
 	}
 
-
-	void Renderer::update()
-	{
-		gui::showFPS();
-
-		m_camera->cameraControl();
-
-		gui::updateMouseDisplacements();
-		gui::updateKeyPress();
-
-		m_physics->update(1.0 / 60);
-	}
-
-	// ici m_scene est NULL
 	void Renderer::run() {
 		//DRAW ---
 		//std::cout << "render" << "\n";
@@ -103,31 +94,21 @@ namespace renderer
 
 
 		m_ViewMatrix = m_camera->GetViewMatrix();
-		m_ProjectionMatrix = glm::perspective(m_camera->m_zoom, (float)gui::WINDOW_WIDTH / (float)gui::WINDOW_HEIGHT, 0.1f, 100.0f);
-
+		m_ProjectionMatrix = m_camera->GetProjectionMatrix(gui::WINDOW_WIDTH, (float)gui::WINDOW_HEIGHT);
+		
 		//Render models
 		glm::mat4 UnitMat = glm::mat4(1);
 		glm::mat4 RoomModel = glm::scale(UnitMat, glm::vec3(0.1));
 
-		btTransform trans3;
-		m_physics->getGround();
-		btRigidBody* scalpel = m_physics->createRigidBody(m_scene->findModel("Adam_Lungs")->getPositionVector(), 1.0);
-		scalpel->getMotionState()->getWorldTransform(trans3);
-		btScalar mat[16];
-		trans3.getOpenGLMatrix(mat);
-		glm::mat4 fall = glm::mat4(mat[0], mat[1], mat[2], mat[3], mat[4], mat[5], mat[6], mat[7], mat[8], mat[9], mat[10], mat[11], mat[12], mat[13], mat[14], mat[15]);
-		RoomModel = RoomModel * fall;
-		m_scene->findModel("Adam_Lungs")->setPosition(RoomModel);
 
-		glm::vec3 translation = glm::vec3(10.0f, -10.0f, -10.0f);
-		//glm::mat4 RoomModel = glm::translate(UnitMat, translation);
-
-		drawModels("lightingShader", RoomModel);
+		drawModels("lightingShader", UnitMat);
 		renderDebug(RoomModel);
 		//End Draw
-		glfwSwapBuffers(gui::window);
+		
 		// Flip Buffers and Draw
-		glfwPollEvents();
+		glfwSwapBuffers(gui::window);
+		
+		//glfwPollEvents(); 
 	}
 
 	//Test code : show extra info
@@ -150,8 +131,16 @@ namespace renderer
 		glDrawArrays(GL_LINES, 0, 6);
 		glBindVertexArray(0);
 
-		for (int m = 0; m < m_scene->m_models.size(); m++)
-			m_scene->m_models[m].DrawBoundingBox(*m_shaders["flatShader"], glm::mat4(1));
+		for (int m = 0; m < m_scene->m_models.size(); m++) {
+			//m_scene->m_models[m].DrawBoundingBox(*m_shaders["flatShader"], glm::mat4(1));
+			m_scene->m_models[m].DrawBoundingBox(*m_shaders["flatShader"]);
+
+			glm::mat4 intersectModel = glm::translate(glm::mat4(1), m_scene->m_models[m].m_intersectPosition);
+			m_shaders["flatShader"]->setMatrix4("Model", intersectModel);
+			glBindVertexArray(posTargetVAO);
+			glDrawArrays(GL_LINES, 0, 6);
+			glBindVertexArray(0);
+		}
 
 	}
 }

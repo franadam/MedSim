@@ -25,12 +25,12 @@ public:
 private:
 	resource::Scene* m_scene;
 	renderer::Camera* m_camera;
-	glm::mat4 posTargetPosition;
+	//glm::mat4 posTargetPosition;
 	int m_id_model = -1;
 	Ray m_ray;
 
 	void testIntersect(Ray ray);
-	void moveModel();
+	void moveModel(glm::vec3 shift);
 };
 
 #endif

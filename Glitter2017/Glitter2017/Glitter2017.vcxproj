@@ -145,6 +145,8 @@
     <None Include="Shaders\advancedLightingMapShaderV.vert" />
     <None Include="Shaders\BumpMappingShaderF.frag" />
     <None Include="Shaders\BumpMappingShaderV.vert" />
+    <None Include="Shaders\flat.frag" />
+    <None Include="Shaders\flat.vert" />
     <None Include="Shaders\lightingMapShaderF.frag" />
     <None Include="Shaders\lightingMapShaderV.vert" />
     <None Include="Shaders\lightingMultipleShaderF.frag" />
@@ -161,7 +163,6 @@
     <ClCompile Include="..\..\src\Sources\glad.c" />
     <ClCompile Include="..\..\src\Sources\Gui.cpp" />
     <ClCompile Include="..\..\src\Sources\main.cpp" />
-    <ClCompile Include="..\..\src\Sources\main_scene.cpp" />
     <ClCompile Include="..\..\src\Sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\Sources\Model.cpp" />
     <ClCompile Include="..\..\src\Sources\Physics.cpp" />

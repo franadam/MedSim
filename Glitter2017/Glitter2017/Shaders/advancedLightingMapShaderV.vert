@@ -18,5 +18,5 @@ void main()
     vs_out.FragPos = aPos;
     vs_out.Normal = aNormal;
     vs_out.TexCoords = aTexCoords;
-	gl_Position = Projection * View *Model* vec4(0.3 * vs_out.FragPos, 1.0);
+	gl_Position = Projection * View * Model * vec4(vs_out.FragPos.xyz, 1.0f);
 }

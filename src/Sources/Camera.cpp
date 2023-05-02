@@ -189,4 +189,24 @@ namespace renderer
 
         return ray;
     }
+
+
+    Ray Camera::screenToWorldRay(float screenX, float screenY)
+    {
+        Ray ray;
+        
+        ray.origin = getPosition();
+
+        glm::dvec3 remote = glm::unProject(glm::vec3(screenX, gui::WINDOW_HEIGHT - screenY, 1.0f), GetViewMatrix(),
+            GetProjectionMatrix(gui::WINDOW_WIDTH, gui::WINDOW_HEIGHT), glm::vec4(0, 0, gui::WINDOW_WIDTH, gui::WINDOW_HEIGHT));
+        ray.direction = glm::normalize(remote - ray.origin);
+        
+        return ray;
+    }
+
+    Ray Camera::mouseToWorldRay()
+    {
+        return screenToWorldRay(gui::mouse_x, gui::mouse_y);
+    }
+
 }

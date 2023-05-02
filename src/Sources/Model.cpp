@@ -20,7 +20,6 @@ namespace resource
 		m_position = glm::mat4(1);
 
 		// Process ASSIMP's root node recursively
-		// std::cout << "scene " << scene << " root " << scene->mRootNode << "\n" << std::flush;
 		processNode(scene->mRootNode, scene);
 
 		std::cout << "done";
@@ -41,21 +40,13 @@ namespace resource
 	}
 
 	glm::vec3 Model::getPositionVector() {
-		return m_translation;
+		return glm::vec3(m_position[3]);
 	}
 
 	std::string Model::getName() {
 		return m_name;
 	}
 
-	void Model::setTransform(glm::mat4 PVM) {
-		m_Transform = PVM;
-	}
-
-	void Model::setPosition(glm::vec3 translation) {
-		m_translation = translation;
-		m_position = glm::translate(glm::mat4(1), translation);
-	}
 
 	void Model::setPosition(glm::mat4 position) {
 		m_position = position;
@@ -71,10 +62,14 @@ namespace resource
 
 	bool Model::computeIntersectAABB(const Ray& ray)
 	{
+		glm::mat4 inv_position = glm::inverse(m_position);
+		Ray ray_model;
+		ray_model.origin = inv_position * glm::vec4(ray.origin, 1.0);
+		ray_model.direction = inv_position * glm::vec4(ray.direction, 0.0);
 		for (GLuint i = 0; i < meshes.size(); i++)
-			if (meshes[i].isIntersectAABB(ray))
+			if (meshes[i].isIntersectAABB(ray_model))
 			{
-				m_intersectPosition = meshes[i].m_intersectPosition;
+				m_intersectPosition = m_position * glm::vec4(meshes[i].m_intersectPosition, 1.0);
 				return true;
 			}
 		return false;
@@ -83,45 +78,21 @@ namespace resource
 	void Model::transformAABB()
 	{
 		for (GLuint i = 0; i < meshes.size(); i++)
-			meshes[i].transformAABB(m_Transform);
+			meshes[i].transformAABB(m_position);
+			//meshes[i].transformAABB(m_Transform);
 	}
 
-	void Model::computeAABB()
+	//void Model::DrawBoundingBox(Shader shader, glm::mat4 placement)
+	void Model::DrawBoundingBox(Shader shader)
 	{
 		for (GLuint i = 0; i < meshes.size(); i++)
-			meshes[i].computeAABB(m_Transform);
+			meshes[i].DrawBoundingBox(shader, m_position);
 	}
 
-	void Model::DrawBoundingBox(Shader shader, glm::mat4 placement)
-	{
-		for (GLuint i = 0; i < meshes.size(); i++)
-			meshes[i].DrawBoundingBox(shader, placement);
+	void Model::shiftPosition(glm::vec3 translation) {
+		glm::mat4 translate = glm::translate(glm::mat4(1), translation);
+		m_position = translate * m_position;
 	}
-
-	// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	//void Model::loadModel(std::string path)
-	//{
-	//	// Read file via ASSIMP 
-	//	static std::mutex assMutex;
-	//	assMutex.lock();
-	//	Assimp::Importer importer;
-	//	assMutex.unlock();
-	//
-	//	//aiProcess_GenBoundingBoxes 
-	//	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes);
-	//
-	//	// Check for errors
-	//	if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
-	//	{
-	//		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-	//		return;
-	//	}
-	//	// Retrieve the directory path of the filepath
-	//	directory = path.substr(0, path.find_last_of('/'));
-	//
-	//	// Process ASSIMP's root node recursively
-	//	processNode(scene->mRootNode, scene);
-	//}
 
 	// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void Model::processNode(aiNode* node, const aiScene* scene)

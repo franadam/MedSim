@@ -21,7 +21,7 @@ namespace resource
 
     void Mesh::transformAABB(glm::mat4 PVM) {
         computeAABB(PVM);
-        boundingBoxVAO = createBoundingBoxVAO(m_aabb.mMin, m_aabb.mMax);
+        boundingBoxVAO = utils::createBoundingBoxVAO(m_aabb.mMin, m_aabb.mMax);
     }
 
     void Mesh::computeAABB(glm::mat4 PVM) {
@@ -33,12 +33,12 @@ namespace resource
         this->m_aabb.mMax.x = -INFINITY;
         this->m_aabb.mMax.y = -INFINITY;
         this->m_aabb.mMax.z = -INFINITY;
-        //gl_Position = Projection * View *Model* vec4(vs_out.FragPos, 1.0);
+
         for (int i = 0; i < vertices.size(); i++)
         {
             glm::vec4 pos = glm::vec4(vertices[i].Position.x, vertices[i].Position.y, vertices[i].Position.z, 1);
-            glm::vec4 newPos = PVM * pos;
 
+            glm::vec4 newPos = pos;
             if (newPos.x < this->m_aabb.mMin.x)
             {
                 this->m_aabb.mMin.x = newPos.x;
@@ -64,8 +64,6 @@ namespace resource
             {
                 this->m_aabb.mMax.z = newPos.z;
             }
-
-
         }
     }
 
@@ -195,7 +193,6 @@ namespace resource
         tmax = glm::min(tmax, glm::max(tz1, tz2));
 
         m_intersectPosition = ray.origin + tmin * (ray.direction);
-        //m_tmin = tmin;
 
         return tmax >= glm::max(0.0, tmin);
 

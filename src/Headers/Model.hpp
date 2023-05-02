@@ -28,8 +28,6 @@ namespace resource
 
 	public:
 		glm::vec3 m_intersectPosition;
-		glm::vec3 m_translation;
-		bool m_isSelected;
 		std::string m_name;
 
 		/*  Functions   */
@@ -39,7 +37,8 @@ namespace resource
 
 		// Draws the model, and thus all its meshes
 		void Draw(Shader shader);
-		void DrawBoundingBox(Shader shader, glm::mat4 placement);
+		//void DrawBoundingBox(Shader shader, glm::mat4 placement);
+		void DrawBoundingBox(Shader shader);
 
 		// Loads a model with supported ASSIMP extensions from file
 		static const aiScene* loadAIScene(std::string path);
@@ -47,7 +46,7 @@ namespace resource
 
 		//AABB
 		bool computeIntersectAABB(const Ray& ray);
-		void computeAABB();
+		//void computeAABB();
 		void transformAABB();
 
 		int getNumMeshes();
@@ -56,10 +55,10 @@ namespace resource
 		glm::vec3 getPositionVector();
 		std::string getName();
 
-		void setTransform(glm::mat4 PVM);
+		//void setTransform(glm::mat4 PVM);
 		void setPosition(glm::vec3 translation);
 		void setPosition(glm::mat4 position);
-		
+		void shiftPosition(glm::vec3 translation);
 	private:
 		/*  Model Data  */
 		std::vector<Mesh> meshes;
@@ -69,7 +68,7 @@ namespace resource
 		int m_numMeshes;
 		int m_numFaces;
 		int m_id;
-		glm::mat4 m_Transform;
+		//glm::mat4 m_Transform;
 		glm::mat4 m_position;
 
 		/*  Functions   */
